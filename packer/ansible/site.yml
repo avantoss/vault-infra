@@ -1,0 +1,9 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2017 Avant, Sean Lingren
+
+- name: Configure Vault
+  hosts: all
+  become: yes
+  roles:
+    - vault
