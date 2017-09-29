@@ -1,0 +1,13 @@
+.DS_Store
+*.ignore
+*.pem
+*.priv
+*.privkey
+*.retry
+*.key
+*.crt
+.terraform
+*.tfstate
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfstate.*.backup
