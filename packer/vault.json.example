@@ -1,0 +1,59 @@
+{
+  "variables": {
+    "license" : "The MIT License (MIT)",
+    "copyright" : "Copyright (c) 2014-2017 Avant, Sean Lingren",
+    "vault_version": "0.8.3",
+    "vault_version_checksum": "sha256:a3b687904cd1151e7c7b1a3d016c93177b33f4f9ce5254e1d4f060fca2ac2626",
+    "builder_region": "us-west-1",
+    "builder_vpc_id": "vpc-xxxxxxxx",
+    "builder_subnet_id": "subnet-xxxxxxxx",
+    "ami_regions": "us-west-1,us-west-2",
+    "ami_users": "123456789012,456789012345"
+  },
+  "builders": [
+    {
+      "name": "vault",
+      "type": "amazon-ebs",
+      "region": "{{ user `vault_version` }}",
+      "source_ami_filter": {
+        "filters": {
+          "name": "CentOS Linux 7 x86_64 HVM EBS *"
+        },
+        "owners": ["410186602215"],
+        "most_recent": true
+      },
+      "instance_type": "t2.small",
+      "ssh_username": "centos",
+      "ami_name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+      "ami_description": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+      "ami_users": "{{user `ami_users`}}",
+      "ami_regions": "{{user `ami_regions`}}",
+      "vpc_id": "{{user `builder_vpc_id`}}",
+      "subnet_id": "{{user `builder_subnet_id`}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 12,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "tags":
+        {
+          "Name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+          "os": "CentOS7",
+          "build_date": "{{ timestamp }}",
+          "vault_version": "{{user `vault_version`}}"
+        }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "user": "centos",
+      "extra_arguments": [ "--extra-vars", "vault_version={{user `vault_version`}} vault_version_checksum={{user `vault_version_checksum`}}" ],
+      "ansible_env_vars": [ "ANSIBLE_SSH_ARGS='-o GSSAPIAuthentication=no -o UserKnownHostsFile=/dev/null'" ],
+      "playbook_file": "./ansible/site.yml"
+    }
+  ]
+}

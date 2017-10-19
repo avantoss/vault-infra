@@ -1,0 +1,128 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2017 Avant, Sean Lingren
+
+- name: Update all packages
+  package:
+    name: '*'
+    state: latest
+
+- name: Install EPEL
+  package:
+    name: "epel-release"
+    state: latest
+
+- name: Install Necessary Packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - wget
+    - unzip
+    - awscli
+
+- name: Create the Vault Group
+  group:
+    name: vault
+    gid: 987
+    system: yes
+
+- name: Create the Vault User
+  user:
+    name: vault
+    uid: 987
+    system: yes
+    group: vault
+    createhome: no
+    home: /srv/vault/
+    shell: /sbin/nologin
+    comment: A service account to run Vault
+
+- name: Install Vault
+  block:
+    - name: Download Vault
+      get_url:
+        url: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip
+        dest: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
+        owner: root
+        group: root
+        mode: 0744
+        seuser: system_u
+        serole: object_r
+        setype: usr_t
+        selevel: s0
+        checksum: "{{ vault_version_checksum }}"
+
+    - name: Unarchive Vault
+      unarchive:
+        src: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
+        dest: /usr/bin
+        remote_src: True
+
+    - name: Set Vault Permissions
+      file:
+        path: /usr/bin/vault
+        state: file
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: bin_t
+        selevel: s0
+
+- name: Create the Vault Files and Folders
+  block:
+    - name: Main Folder
+      file:
+        path: /etc/vault
+        state: directory
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: etc_t
+        selevel: s0
+
+    - name: SSL Folder
+      file:
+        path: /etc/vault/ssl
+        state: directory
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: cert_t
+        selevel: s0
+
+- name: Add the Vault Service
+  copy:
+    src: vault.service
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: vault
+    mode: 0755
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t
+    selevel: s0
+
+- name: Add Vault Global Env Vars
+  copy:
+    src: profile.d_vault.sh
+    dest: /etc/profile.d/vault.sh
+    owner: root
+    group: vault
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: bin_t
+    selevel: s0
+
+- name: Allow Vault to Lock Memory
+  capabilities:
+    state: present
+    path: /usr/bin/vault
+    capability: cap_ipc_lock=+ep

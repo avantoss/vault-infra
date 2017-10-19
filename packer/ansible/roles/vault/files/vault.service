@@ -1,0 +1,29 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2017 Avant, Sean Lingren
+
+[Unit]
+Description=Vault Server
+Requires=basic.target network-online.target
+After=basic.target network-online.target
+
+[Service]
+User=vault
+Group=vault
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=read-only
+SecureBits=keep-caps
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+NoNewPrivileges=yes
+ExecStart=/usr/bin/vault server -config=/etc/vault/
+KillSignal=SIGINT
+TimeoutStopSec=30s
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
