@@ -86,7 +86,7 @@ An Application Load Balancer routes traffic to only the Vault leader, based on a
 We also enable a localhost listener directly on the node with TLS disabled so that the root user can access Vault normally. Since this listener is insecure it is on a special port and only accessible from the node itself. Access to the Vault nodes should be carefully controlled, even though access to the node does not imply access to secrets.
 
 ### S3 Storage Backend
-We use S3 as the backend because it is very reliable, scalable, and simple to set up. AWS promises 99.999999999% data reliability, and with cross region replication we virtually eliminate any chance of data loss. S3 can also scale to any Vault use case we have encountered at Avant, eliminating cumbersome management of backend performance required for other supported storage backends. Finally, S3 is simple to set up and secure, becasuse we can use Terraform to manage bucket policies and IAM instance profiles to manage read/write access.
+We use S3 as the backend because it is very reliable, scalable, and simple to set up. AWS promises 99.999999999% data reliability, and with cross region replication we virtually eliminate any chance of data loss. S3 can also scale to any Vault use case we have encountered at Avant, eliminating cumbersome management of backend performance required for other supported storage backends. Finally, S3 is simple to set up and secure, because we can use Terraform to manage bucket policies and IAM instance profiles to manage read/write access.
 
 This bucket is not encrypted because cross region replication does not support encrypted objects. However Vault encrypts all objects before it ever writes them to S3.
 
