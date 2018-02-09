@@ -14,7 +14,7 @@
     {
       "name": "vault",
       "type": "amazon-ebs",
-      "region": "{{ user `vault_version` }}",
+      "region": "{{ user `builder_region` }}",
       "source_ami_filter": {
         "filters": {
           "name": "CentOS Linux 7 x86_64 HVM EBS *"
