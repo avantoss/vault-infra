@@ -1,10 +1,11 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 cluster_name      = "vault-cluster-${ env }"
 max_lease_ttl     = "192h" # One week
 default_lease_ttl = "192h" # One week
+ui                = "true"
 
 listener "tcp" {
   address     = "127.0.0.1:9200"

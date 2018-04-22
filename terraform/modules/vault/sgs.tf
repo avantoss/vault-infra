@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_security_group" "vault_sg_in_alb" {
   name        = "vault_sg_in_alb"

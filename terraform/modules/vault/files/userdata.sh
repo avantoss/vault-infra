@@ -2,7 +2,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 # Get the Instance ID
 INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)

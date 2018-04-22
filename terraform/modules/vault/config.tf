@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 # Upload config to S3
 resource "aws_s3_bucket_object" "object" {
