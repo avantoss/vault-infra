@@ -1,9 +1,9 @@
 {
   "variables": {
     "license" : "The MIT License (MIT)",
-    "copyright" : "Copyright (c) 2014-2017 Avant, Sean Lingren",
-    "vault_version": "0.8.3",
-    "vault_version_checksum": "sha256:a3b687904cd1151e7c7b1a3d016c93177b33f4f9ce5254e1d4f060fca2ac2626",
+    "copyright" : "Copyright (c) 2014-2018 Avant, Sean Lingren",
+    "vault_version": "0.10.0",
+    "vault_version_checksum": "sha256:a6b4b6db132f3bbe6fbb77f76228ffa45bd55a5a1ab83ff043c2c665c3f5a744",
     "builder_region": "us-west-1",
     "builder_vpc_id": "vpc-xxxxxxxx",
     "builder_subnet_id": "subnet-xxxxxxxx",
@@ -14,7 +14,7 @@
     {
       "name": "vault",
       "type": "amazon-ebs",
-      "region": "{{ user `vault_version` }}",
+      "region": "{{ user `builder_region` }}",
       "source_ami_filter": {
         "filters": {
           "name": "CentOS Linux 7 x86_64 HVM EBS *"

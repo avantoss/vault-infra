@@ -33,7 +33,7 @@ aws s3 cp ssh_key.pem s3://BUCKET_NAME/resources/ssh_key/KEY_NAME.pem --sse AES2
 10. Temporarily attach an SSH security group to all Vault instances, SSH in, and become root
 11. Initialize Vault on one of the nodes
 ```bash
-vault init
+vault operator init
 ```
 12. Copy all of the unseal keys and the root key locally and then to the correct folders in S3 using the CLI
 ```bash
@@ -46,7 +46,7 @@ aws s3 cp unseal_key_five.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_
 ```
 13. Unseal Vault with three of the five keys
 ```bash
-vault unseal UNSEAL_KEY
+vault operator unseal UNSEAL_KEY
 ```
 14. Clear your history and exit
 ```bash
@@ -143,7 +143,7 @@ For ease of use this module requires that you manually enter the AMI ID of the P
 ## License
 This project is licensed under the MIT License:
 
-Copyright (c) 2014-2017, Avant, Sean Lingren
+Copyright (c) 2014-2018, Avant, Sean Lingren
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_autoscaling_group" "asg" {
   name = "vault_asg_${ var.env }"

@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2017 Avant, Sean Lingren
+# Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_s3_bucket" "vault_resources" {
   bucket = "${ var.vault_resources_bucket_name }"
