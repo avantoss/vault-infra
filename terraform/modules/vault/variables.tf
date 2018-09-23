@@ -98,6 +98,11 @@ variable "ssh_key_name" {
   description = "The name of the ssh key to use for the EC2 instance"
 }
 
+variable "ssh_public_key" {
+  type        = "string"
+  description = "Public key"
+}
+
 variable "asg_min_size" {
   type        = "string"
   description = "Minimum number of instances in the ASG"

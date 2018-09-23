@@ -24,7 +24,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tags = [{
     key                 = "Name"
-    value               = "vault"
+    value               = "vault-${ var.env }"
     propagate_at_launch = true
   }]
 
