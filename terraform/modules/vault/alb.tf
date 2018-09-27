@@ -3,7 +3,7 @@
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_alb" "alb" {
-  name            = "vault-alb"
+  name            = "vault-alb-${ var.env }"
   internal        = true
   security_groups = ["${ aws_security_group.vault_sg_in_alb.id }"]
   subnets         = "${ var.alb_subnets }"

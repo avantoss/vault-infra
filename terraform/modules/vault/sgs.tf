@@ -3,7 +3,7 @@
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_security_group" "vault_sg_in_alb" {
-  name        = "vault_sg_in_alb"
+  name        = "vault_${ var.env }_sg_in_alb"
   description = "Allow traffic into the vault alb"
 
   vpc_id = "${ var.vpc_id }"
@@ -34,7 +34,7 @@ resource "aws_security_group" "vault_sg_in_alb" {
 }
 
 resource "aws_security_group" "vault_sg_in_ec2" {
-  name        = "vault_sg_in_ec2"
+  name        = "vault_${ var.env }_sg_in_ec2"
   description = "Allow traffic into the vault EC2 instances from the alb"
 
   vpc_id = "${ var.vpc_id }"
@@ -62,7 +62,7 @@ resource "aws_security_group" "vault_sg_in_ec2" {
 }
 
 resource "aws_security_group" "vault_sg_in_cluster" {
-  name        = "vault_sg_in_cluster"
+  name        = "vault_${ var.env }_sg_in_cluster"
   description = "Allow vault EC2 instances to communicate on the cluster port"
 
   vpc_id = "${ var.vpc_id }"
@@ -84,7 +84,7 @@ resource "aws_security_group" "vault_sg_in_cluster" {
   tags = "${ merge(
     map(
       "Name",
-      "vault_sg_in_cluster"
+      "vault_sg_${ var.env }_in_cluster"
     ),
     var.tags ) }"
 }

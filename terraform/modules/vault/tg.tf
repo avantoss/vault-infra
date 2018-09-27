@@ -3,7 +3,7 @@
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_alb_target_group" "tg" {
-  name     = "vault-tg"
+  name     = "vault-tg-${ var.env }"
   port     = "8200"
   protocol = "HTTPS"
   vpc_id   = "${ var.vpc_id }"
@@ -30,7 +30,7 @@ resource "aws_alb_target_group" "tg" {
   tags = "${ merge(
     map(
       "Name",
-      "vault-tg"
+      "vault-tg-${ var.env }"
     ),
     var.tags ) }"
 }

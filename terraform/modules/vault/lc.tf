@@ -6,7 +6,7 @@ resource "aws_launch_configuration" "lc" {
   name_prefix          = "vault_"
   image_id             = "${ var.ami_id }"
   instance_type        = "${ var.instance_type }"
-  key_name             = "${ var.ssh_key_name }"
+  key_name             = "${ aws_key_pair.vault_ec2_ssh_key.key_name }"
   iam_instance_profile = "${ aws_iam_instance_profile.vault_ec2_instance_profile.id }"
   user_data            = "${ data.template_file.userdata.rendered }"
 

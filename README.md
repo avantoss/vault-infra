@@ -13,6 +13,9 @@ There are a number of features unique to this module that make it attractive for
 - The Packer builder allows for simple live Vault upgrades
 - The ALB will only route to a healthy Vault leader, preventing unnecessary redirects
 
+## Vault Architecture
+![Architecture Map](https://raw.githubusercontent.com/grem11n/vault-infra/master/_docs/architecture.png)
+
 ## Getting Started
 1. Modify the variables at the top of `packer/vault.json` to reflect your infrastructure
 2. From the Packer directory run `packer build vault.json`
