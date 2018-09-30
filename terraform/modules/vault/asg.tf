@@ -3,7 +3,7 @@
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_autoscaling_group" "asg" {
-  name = "vault_asg_${ var.env }"
+  name = "${ var.name_prefix }"
 
   launch_configuration = "${ aws_launch_configuration.lc.name }"
   vpc_zone_identifier  = ["${ var.ec2_subnets }"]
@@ -22,13 +22,19 @@ resource "aws_autoscaling_group" "asg" {
   wait_for_capacity_timeout = 0
   termination_policies      = ["OldestInstance"]
 
-  tags = [{
-    key                 = "Name"
-    value               = "vault-${ var.env }"
-    propagate_at_launch = true
-  }]
+  enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances",
+  ]
 
   tags = [
-    "${ var.tags_asg }",
+    "${ map( "key", "Name", "value", var.name_prefix, "propagate_at_launch", "true" ) }",
+    "${ data.null_data_source.asg_tags.*.outputs }",
   ]
 }

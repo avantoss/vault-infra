@@ -5,11 +5,9 @@
 ############################
 ## Environment #############
 ############################
-
-env            = "prod"
+name_prefix    = "vault-prod"
 region         = "us-west-1"
 dr_region      = "us-west-2"
-aws_account_id = "123456789012"
 
 # Tags and tags_asg must be duplicated to handle the
 # map expected for most terraform tag blocks and list
@@ -20,28 +18,9 @@ tags = {
   syscontact = "john.doe"
 }
 
-tags_asg = [
-  {
-    key                 = "env"
-    value               = "prod"
-    propagate_at_launch = true
-  },
-  {
-    key                 = "department"
-    value               = "devops"
-    propagate_at_launch = true
-  },
-  {
-    key                 = "syscontact"
-    value               = "john.doe"
-    propagate_at_launch = true
-  }
-]
-
 ############################
 ## Networking ##############
 ############################
-
 vault_dns_address = "https://vault.example.com:443"
 
 vpc_id = "vpc-xxxxxxxx"
@@ -50,36 +29,30 @@ alb_subnets = ["subnet-xxxxxxxx", "subnet-xxxxxxxx", "subnet-xxxxxxxx"]
 ec2_subnets = ["subnet-xxxxxxxx", "subnet-xxxxxxxx", "subnet-xxxxxxxx"]
 
 alb_allowed_ingress_cidrs = ["10.0.0.0/8"]
-alb_allowed_egress_cidrs  = ["10.0.0.0/8"]
 
 ############################
 ## ALB #####################
 ############################
-
 alb_certificate_arn = "arn:aws:iam::123456789012:server-certificate/vault.example.com"
 
 ############################
 ## EC2 #####################
 ############################
-
 ami_id        = "ami-xxxxxxxx"
 instance_type = "r4.large"
 ssh_key_name  = "vault-ssh-key"
-public_key    = "ssh-rsa AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA vault-prod"
 
-asg_min_size         = 3
-asg_max_size         = 4
-asg_desired_capacity = 3
+asg_min_size         = 2
+asg_max_size         = 3
+asg_desired_capacity = 2
 
 ############################
 ## S3 ######################
 ############################
-
 vault_resources_bucket_name = "vault-resources"
 vault_data_bucket_name      = "vault-data"
 
 ############################
 ## DynamoDB ################
 ############################
-
 dynamodb_table_name = "vault-ha-coordination"

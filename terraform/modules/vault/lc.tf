@@ -6,7 +6,7 @@ resource "aws_launch_configuration" "lc" {
   name_prefix          = "vault_"
   image_id             = "${ var.ami_id }"
   instance_type        = "${ var.instance_type }"
-  key_name             = "${ aws_key_pair.vault_ec2_ssh_key.key_name }"
+  key_name             = "${ var.ssh_key_name }"
   iam_instance_profile = "${ aws_iam_instance_profile.vault_ec2_instance_profile.id }"
   user_data            = "${ data.template_file.userdata.rendered }"
 
@@ -14,10 +14,7 @@ resource "aws_launch_configuration" "lc" {
   enable_monitoring           = false
   associate_public_ip_address = false
 
-  security_groups = [
-    "${ aws_security_group.vault_sg_in_ec2.id }",
-    "${ aws_security_group.vault_sg_in_cluster.id }",
-  ]
+  security_groups = ["${ aws_security_group.vault_sg_in_ec2.id }"]
 
   root_block_device {
     volume_type           = "gp2"

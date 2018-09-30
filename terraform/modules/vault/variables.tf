@@ -5,10 +5,9 @@
 ############################
 ## Environment #############
 ############################
-
-variable "env" {
+variable "name_prefix" {
   type        = "string"
-  description = "The environment that Vault will be run in"
+  description = "A name to prefix every created resource with"
 }
 
 variable "region" {
@@ -21,25 +20,14 @@ variable "dr_region" {
   description = "The AWS Region to use for disaster recovery"
 }
 
-variable "aws_account_id" {
-  type        = "string"
-  description = "The account id of the AWS account to place resources in"
-}
-
 variable "tags" {
   type        = "map"
   description = "A map of tags to apply to all resources"
 }
 
-variable "tags_asg" {
-  type        = "list"
-  description = "A list of maps of tags to apply to the autoscaling group"
-}
-
 ############################
 ## Networking ##############
 ############################
-
 variable "vault_dns_address" {
   type        = "string"
   description = "The DNS address that vault will be accessible at"
@@ -65,15 +53,9 @@ variable "alb_allowed_ingress_cidrs" {
   description = "A list of CIDRs to allow traffic into the ALB"
 }
 
-variable "alb_allowed_egress_cidrs" {
-  type        = "list"
-  description = "A list of CIDRS to allow traffic out from ALB. This should match the subnet CIDRs that the Vault EC2 instances are launched in"
-}
-
 ############################
 ## ALB #####################
 ############################
-
 variable "alb_certificate_arn" {
   type        = "string"
   description = "The ARN of the certificate to use on the ALB"
@@ -82,7 +64,6 @@ variable "alb_certificate_arn" {
 ############################
 ## EC2 #####################
 ############################
-
 variable "ami_id" {
   type        = "string"
   description = "The ID of the AMI to use to launch Vault"
@@ -96,11 +77,6 @@ variable "instance_type" {
 variable "ssh_key_name" {
   type        = "string"
   description = "The name of the ssh key to use for the EC2 instance"
-}
-
-variable "ssh_public_key" {
-  type        = "string"
-  description = "Public key"
 }
 
 variable "asg_min_size" {
@@ -121,7 +97,6 @@ variable "asg_desired_capacity" {
 ############################
 ## S3 ######################
 ############################
-
 variable "vault_resources_bucket_name" {
   type        = "string"
   description = "The name of the vault resources bucket"
@@ -135,7 +110,6 @@ variable "vault_data_bucket_name" {
 ############################
 ## DynamoDB ################
 ############################
-
 variable "dynamodb_table_name" {
   type        = "string"
   description = "The name of the dynamodb table that vault will create to coordinate HA"

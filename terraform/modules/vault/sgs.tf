@@ -2,89 +2,91 @@
 #
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
+############################
+## ALB #####################
+############################
 resource "aws_security_group" "vault_sg_in_alb" {
-  name        = "vault_${ var.env }_sg_in_alb"
+  name        = "${ var.name_prefix }_sg_in_alb"
   description = "Allow traffic into the vault alb"
 
   vpc_id = "${ var.vpc_id }"
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["${ var.alb_allowed_ingress_cidrs }"]
-  }
-
-  # Restricting egress to just the vault ec2 security group would
-  # cause a dependency loop, but we can at least restrict egress
-  # to only a subset of the internal network
-  egress {
-    from_port   = 8200
-    to_port     = 8200
-    protocol    = "tcp"
-    cidr_blocks = ["${ var.alb_allowed_egress_cidrs }"]
-  }
-
   tags = "${ merge(
-    map(
-      "Name",
-      "vault_sg_in_alb"
-    ),
+    map("Name", "${ var.name_prefix }_sg_in_alb"),
     var.tags ) }"
 }
 
+resource "aws_security_group_rule" "vault_sg_in_alb_80" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.vault_sg_in_alb.id }"
+
+  protocol    = "tcp"
+  from_port   = 80
+  to_port     = 80
+  cidr_blocks = ["${ var.alb_allowed_ingress_cidrs }"]
+}
+
+resource "aws_security_group_rule" "vault_sg_in_alb_443" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.vault_sg_in_alb.id }"
+
+  protocol    = "tcp"
+  from_port   = 443
+  to_port     = 443
+  cidr_blocks = ["${ var.alb_allowed_ingress_cidrs }"]
+}
+
+resource "aws_security_group_rule" "vault_sg_out_alb_8200" {
+  type              = "egress"
+  security_group_id = "${ aws_security_group.vault_sg_in_alb.id }"
+
+  protocol                 = "tcp"
+  from_port                = 8200
+  to_port                  = 8200
+  source_security_group_id = "${ aws_security_group.vault_sg_in_ec2.id }"
+}
+
+############################
+## EC2 #####################
+############################
 resource "aws_security_group" "vault_sg_in_ec2" {
-  name        = "vault_${ var.env }_sg_in_ec2"
+  name        = "${ var.name_prefix }_sg_in_ec2"
   description = "Allow traffic into the vault EC2 instances from the alb"
 
   vpc_id = "${ var.vpc_id }"
 
-  ingress {
-    from_port       = 8200
-    to_port         = 8200
-    protocol        = "tcp"
-    security_groups = ["${ aws_security_group.vault_sg_in_alb.id }"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = "${ merge(
-    map(
-      "Name",
-      "vault_sg_in_ec2"
-    ),
+    map("Name", "${ var.name_prefix }_sg_in_ec2"),
     var.tags ) }"
 }
 
-resource "aws_security_group" "vault_sg_in_cluster" {
-  name        = "vault_${ var.env }_sg_in_cluster"
-  description = "Allow vault EC2 instances to communicate on the cluster port"
+resource "aws_security_group_rule" "vault_sg_in_ec2_8200" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.vault_sg_in_ec2.id }"
 
-  vpc_id = "${ var.vpc_id }"
+  protocol                 = "tcp"
+  from_port                = 8200
+  to_port                  = 8200
+  source_security_group_id = "${ aws_security_group.vault_sg_in_alb.id }"
+}
 
-  ingress {
-    from_port = 8201
-    to_port   = 8201
-    protocol  = "tcp"
-    self      = true
-  }
+resource "aws_security_group_rule" "vault_sg_in_ec2_8201" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.vault_sg_in_ec2.id }"
 
-  egress {
-    from_port = 8201
-    to_port   = 8201
-    protocol  = "tcp"
-    self      = true
-  }
+  protocol  = "tcp"
+  from_port = 8201
+  to_port   = 8201
+  self      = true
+}
 
-  tags = "${ merge(
-    map(
-      "Name",
-      "vault_sg_${ var.env }_in_cluster"
-    ),
-    var.tags ) }"
+resource "aws_security_group_rule" "vault_sg_out_ec2_all" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.vault_sg_in_ec2.id }"
+
+  protocol         = "-1"
+  from_port        = 0
+  to_port          = 0
+  cidr_blocks      = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
 }

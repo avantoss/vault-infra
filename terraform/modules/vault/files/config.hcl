@@ -2,10 +2,13 @@
 #
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
-cluster_name      = "vault-cluster-${ env }"
+cluster_name      = "${ name_prefix }"
 max_lease_ttl     = "192h" # One week
 default_lease_ttl = "192h" # One week
 ui                = "true"
+
+api_addr      = "${ vault_dns_address }"
+cluster_addr  = "https://MY_IP_SET_IN_USERDATA:8201"
 
 listener "tcp" {
   address     = "127.0.0.1:9200"
@@ -38,7 +41,4 @@ ha_storage "dynamodb" {
   max_parallel   = "25"
   read_capacity  = "5"
   write_capacity = "5"
-
-  cluster_addr  = "https://MY_IP_SET_IN_USERDATA:8201"
-  redirect_addr = "${ vault_dns_address }"
 }

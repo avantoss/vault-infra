@@ -8,7 +8,7 @@
 INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 
 # Set the Hostname
-hostnamectl set-hostname "vault-${ env }-$INSTANCE_ID"
+hostnamectl set-hostname "${ name_prefix }-$INSTANCE_ID"
 systemctl restart rsyslog.service
 
 # Get Configuration and SSL Certs
