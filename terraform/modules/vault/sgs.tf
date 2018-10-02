@@ -81,7 +81,7 @@ resource "aws_security_group_rule" "vault_sg_in_ec2_8201" {
 }
 
 resource "aws_security_group_rule" "vault_sg_out_ec2_all" {
-  type              = "ingress"
+  type              = "egress"
   security_group_id = "${ aws_security_group.vault_sg_in_ec2.id }"
 
   protocol         = "-1"
