@@ -18,43 +18,55 @@ There are a number of features unique to this module that make it attractive for
 
 ## Getting Started
 1. Modify the variables at the top of `packer/vault.json` to reflect your infrastructure
-2. From the Packer directory run `packer build vault.json`
-3. From the example file, create a terraform.tfvars file with values that match your infrastructure
-4. If you are using remote state create a file named `terraform/main/remote_state.tf` with your configuration
-5. Run `terraform plan` followed by `terraform apply`
-6. Verify that all of the correct infrastructure was created and resolve any issues (please open an issue for any module errors)
-7. Copy the SSL certs to the resources bucket using the CLI
-```bash
-aws s3 cp cert.crt s3://BUCKET_NAME/resources/ssl/cert.crt --sse AES256
-aws s3 cp privkey.key s3://BUCKET_NAME/resources/ssl/privkey.key --sse AES256
-```
-8. Upload the SSH key used to access Vault instances
-```bash
-aws s3 cp ssh_key.pem s3://BUCKET_NAME/resources/ssh_key/KEY_NAME.pem --sse AES256
-```
-9. Terminate all existing Vault instances so that they come back up with the SSL certs
-10. Temporarily attach an SSH security group to all Vault instances, SSH in, and become root
-11. Initialize Vault on one of the nodes
-```bash
-vault operator init
-```
-12. Copy all of the unseal keys and the root key locally and then to the correct folders in S3 using the CLI
-```bash
-aws s3 cp root_key.txt s3://BUCKET_NAME/resources/root_key/root_key.txt --sse AES256
-aws s3 cp unseal_key_one.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_one.txt --sse AES256
-aws s3 cp unseal_key_two.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_two.txt --sse AES256
-aws s3 cp unseal_key_three.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_three.txt --sse AES256
-aws s3 cp unseal_key_four.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_four.txt --sse AES256
-aws s3 cp unseal_key_five.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_five.txt --sse AES256
-```
-13. Unseal Vault with three of the five keys
-```bash
-vault operator unseal UNSEAL_KEY
-```
-14. Clear your history and exit
-```bash
-cat /dev/null > ~/.bash_history && history -c && exit
-```
+1. From the Packer directory run `packer build vault.json`
+1. From the example file, create a terraform.tfvars file with values that match your infrastructure
+1. If you are using remote state create a file named `terraform/main/remote_state.tf` with your configuration
+1. Run `terraform plan` followed by `terraform apply`
+1. Verify that all of the correct infrastructure was created and resolve any issues (please open an issue for any module errors)
+1. Copy the SSL certs to the resources bucket using the CLI
+
+    ```bash
+    aws s3 cp cert.crt s3://BUCKET_NAME/resources/ssl/cert.crt --sse AES256
+    aws s3 cp privkey.key s3://BUCKET_NAME/resources/ssl/privkey.key --sse AES256
+    ```
+
+1. Upload the SSH key used to access Vault instances
+
+    ```bash
+    aws s3 cp ssh_key.pem s3://BUCKET_NAME/resources/ssh_key/KEY_NAME.pem --sse AES256
+    ```
+
+1. Terminate all existing Vault instances so that they come back up with the SSL certs
+1. Temporarily attach an SSH security group to all Vault instances, SSH in, and become root
+1. Initialize Vault on one of the nodes
+
+    ```bash
+    vault operator init
+    ```
+
+1. Copy all of the unseal keys and the root key locally and then to the correct folders in S3 using the CLI
+
+    ```bash
+    aws s3 cp root_key.txt s3://BUCKET_NAME/resources/root_key/root_key.txt --sse AES256
+    aws s3 cp unseal_key_one.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_one.txt --sse AES256
+    aws s3 cp unseal_key_two.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_two.txt --sse AES256
+    aws s3 cp unseal_key_three.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_three.txt --sse AES256
+    aws s3 cp unseal_key_four.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_four.txt --sse AES256
+    aws s3 cp unseal_key_five.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_five.txt --sse AES256
+    ```
+
+1. Unseal Vault with three of the five keys
+
+    ```bash
+    vault operator unseal UNSEAL_KEY
+    ```
+
+1. Clear your history and exit
+
+    ```bash
+    cat /dev/null > ~/.bash_history && history -c && exit
+    ```
+
 15. Remove the temporary SSH security group
 16. Repeat the last three steps for the other Vault instances
 17. Assign DNS to your ALB that matches the certificate that you are using
@@ -122,9 +134,9 @@ DR in the event of a region failure is currently focused on retaining data and l
 ### Secret Version Recovery
 Because we use S3 with versioning enabled it is possible (but not simple) to recover an old version of a secret. This should only be used in extreme circumstances and requires Vault downtime.
 1. Seal and stop all Vault services
-2. In S3 navigate to the secret and restore to the desired previous version
-3. Start and unseal all Vault services
-4. The previous key should now be restored.
+1. In S3 navigate to the secret and restore to the desired previous version
+1. Start and unseal all Vault services
+1. The previous key should now be restored.
 
 Downtime is required because the Vault service maintains a cache that could overwrite any version recovery when it is flushed to the backend.
 
