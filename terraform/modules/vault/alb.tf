@@ -6,7 +6,7 @@ resource "aws_lb" "alb" {
   name            = "${ replace( var.name_prefix, "_", "-" ) }"
   internal        = true
   security_groups = ["${ aws_security_group.vault_sg_in_alb.id }"]
-  subnets         = "${ var.alb_subnets }"
+  subnets         = ["${ var.alb_subnets }"]
 
   access_logs {
     enabled = true
