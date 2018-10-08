@@ -36,7 +36,7 @@ resource "aws_lb_listener" "http_redirect" {
   }
 }
 
-resource "aws_alb_listener" "listener" {
+resource "aws_lb_listener" "listener" {
   load_balancer_arn = "${ aws_lb.alb.arn }"
   port              = "443"
   protocol          = "HTTPS"
