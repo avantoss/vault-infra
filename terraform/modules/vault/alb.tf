@@ -5,7 +5,7 @@
 resource "aws_lb" "alb" {
   name            = "${ replace( var.name_prefix, "_", "-" ) }"
   internal        = true
-  security_groups = ["${ aws_security_group.vault_sg_in_alb.id }"]
+  security_groups = ["${ aws_security_group.alb.id }"]
   subnets         = ["${ var.alb_subnets }"]
 
   access_logs {
@@ -20,7 +20,7 @@ resource "aws_lb" "alb" {
 }
 
 # This block redirects HTTP requests to HTTPS
-resource "aws_lb_listener" "http_redirect" {
+resource "aws_lb_listener" "http" {
   load_balancer_arn = "${ aws_lb.alb.arn }"
   port              = "80"
   protocol          = "HTTP"
@@ -36,7 +36,7 @@ resource "aws_lb_listener" "http_redirect" {
   }
 }
 
-resource "aws_lb_listener" "listener" {
+resource "aws_lb_listener" "https" {
   load_balancer_arn = "${ aws_lb.alb.arn }"
   port              = "443"
   protocol          = "HTTPS"
@@ -44,12 +44,12 @@ resource "aws_lb_listener" "listener" {
   certificate_arn   = "${ var.alb_certificate_arn }"
 
   default_action {
-    target_group_arn = "${ aws_alb_target_group.tg.arn }"
+    target_group_arn = "${ aws_lb_target_group.tg.arn }"
     type             = "forward"
   }
 }
 
-resource "aws_alb_target_group" "tg" {
+resource "aws_lb_target_group" "tg" {
   name     = "${ replace( var.name_prefix, "_", "-" ) }"
   port     = "8200"
   protocol = "HTTPS"

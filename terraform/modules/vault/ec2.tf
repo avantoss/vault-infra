@@ -2,37 +2,65 @@
 #
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
-resource "aws_launch_configuration" "lc" {
-  name_prefix          = "${ var.name_prefix }-"
-  image_id             = "${ var.ami_id }"
-  instance_type        = "${ var.instance_type }"
-  key_name             = "${ var.ssh_key_name }"
-  iam_instance_profile = "${ aws_iam_instance_profile.vault_ec2_instance_profile.id }"
-  user_data            = "${ data.template_file.userdata.rendered }"
+resource "aws_launch_template" "lt" {
+  name_prefix = "${ var.name_prefix }-"
 
-  ebs_optimized               = false
-  enable_monitoring           = false
-  associate_public_ip_address = false
+  image_id      = "${ var.ami_id }"
+  instance_type = "${ var.instance_type }"
+  key_name      = "${ var.ssh_key_name }"
+  user_data     = "${ base64encode( data.template_file.userdata.rendered ) }"
 
-  security_groups = ["${ aws_security_group.vault_sg_in_ec2.id }"]
-
-  root_block_device {
-    volume_type           = "gp2"
-    volume_size           = "100"
-    delete_on_termination = true
+  iam_instance_profile {
+    name = "${ aws_iam_instance_profile.vault_ec2_instance_profile.id }"
   }
 
-  lifecycle {
-    create_before_destroy = true
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size = "100"
+    }
   }
+
+  network_interfaces {
+    device_index                = 0
+    associate_public_ip_address = false
+    delete_on_termination       = true
+
+    security_groups = ["${ aws_security_group.ec2.id }"]
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = "${ merge(
+      map( "Name", "${ var.name_prefix }" ),
+      var.tags ) }"
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = "${ merge(
+      map( "Name", "${ var.name_prefix }" ),
+      var.tags ) }"
+  }
+
+  tags = "${ merge(
+    map( "Name", "${ var.name_prefix }" ),
+    var.tags ) }"
 }
 
 resource "aws_autoscaling_group" "asg" {
-  name = "${ var.name_prefix }-"
+  name_prefix = "${ var.name_prefix }-"
 
-  launch_configuration = "${ aws_launch_configuration.lc.name }"
-  vpc_zone_identifier  = ["${ var.ec2_subnets }"]
-  target_group_arns    = ["${ aws_alb_target_group.tg.arn }"]
+  launch_template {
+    id      = "${ aws_launch_template.lt.id }"
+    version = "$$Latest"
+  }
+
+  vpc_zone_identifier = ["${ var.ec2_subnets }"]
+  target_group_arns   = ["${ aws_lb_target_group.tg.arn }"]
 
   min_size         = "${ var.asg_min_size }"
   max_size         = "${ var.asg_max_size }"
