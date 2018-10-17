@@ -3,8 +3,9 @@
 # Copyright (c) 2014-2018 Avant, Sean Lingren
 
 resource "aws_s3_bucket" "vault_resources" {
-  bucket = "${ var.vault_resources_bucket_name }"
-  region = "${ var.region }"
+  bucket        = "${ var.vault_resources_bucket_name }"
+  region        = "${ var.region }"
+  force_destroy = true
 
   acl    = "log-delivery-write"
   policy = "${ data.aws_iam_policy_document.s3_vault_resources_bucket_policy.json }"
@@ -63,18 +64,16 @@ resource "aws_s3_bucket" "vault_resources" {
   }
 
   tags = "${ merge(
-    map(
-      "Name",
-      "${ var.vault_resources_bucket_name }"
-    ),
+    map("Name", "${ var.vault_resources_bucket_name }"),
     var.tags ) }"
 }
 
 resource "aws_s3_bucket" "vault_resources_dr" {
   provider = "aws.dr"
 
-  bucket = "${ var.vault_resources_bucket_name }-dr"
-  region = "${ var.dr_region }"
+  bucket        = "${ var.vault_resources_bucket_name }-dr"
+  region        = "${ var.dr_region }"
+  force_destroy = true
 
   acl = "private"
 
@@ -95,16 +94,14 @@ resource "aws_s3_bucket" "vault_resources_dr" {
   }
 
   tags = "${ merge(
-    map(
-      "Name",
-      "${ var.vault_resources_bucket_name }"
-    ),
+    map("Name","${ var.vault_resources_bucket_name }"),
     var.tags ) }"
 }
 
 resource "aws_s3_bucket" "vault_data" {
-  bucket = "${ var.vault_data_bucket_name }"
-  region = "${ var.region }"
+  bucket        = "${ var.vault_data_bucket_name }"
+  region        = "${ var.region }"
+  force_destroy = true
 
   acl = "private"
 
@@ -139,18 +136,16 @@ resource "aws_s3_bucket" "vault_data" {
   }
 
   tags = "${ merge(
-    map(
-      "Name",
-      "${ var.vault_data_bucket_name }"
-    ),
+    map("Name","${ var.vault_data_bucket_name }"),
     var.tags ) }"
 }
 
 resource "aws_s3_bucket" "vault_data_dr" {
   provider = "aws.dr"
 
-  bucket = "${ var.vault_data_bucket_name }-dr"
-  region = "${ var.dr_region }"
+  bucket        = "${ var.vault_data_bucket_name }-dr"
+  region        = "${ var.dr_region }"
+  force_destroy = true
 
   acl = "private"
 
@@ -170,9 +165,6 @@ resource "aws_s3_bucket" "vault_data_dr" {
   }
 
   tags = "${ merge(
-    map(
-      "Name",
-      "${ var.vault_data_bucket_name }"
-    ),
+    map("Name","${ var.vault_data_bucket_name }"),
     var.tags ) }"
 }

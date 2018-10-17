@@ -6,12 +6,10 @@ module "vault" {
   source = "../modules/vault"
 
   # Environment
-  env            = "${ var.env }"
-  region         = "${ var.region }"
-  dr_region      = "${ var.dr_region }"
-  aws_account_id = "${ var.aws_account_id }"
-  tags           = "${ var.tags }"
-  tags_asg       = "${ var.tags_asg }"
+  name_prefix = "${ var.name_prefix }"
+  region      = "${ var.region }"
+  dr_region   = "${ var.dr_region }"
+  tags        = "${ var.tags }"
 
   # Networking
   vault_dns_address         = "${ var.vault_dns_address }"
@@ -19,7 +17,6 @@ module "vault" {
   alb_subnets               = "${ var.alb_subnets }"
   ec2_subnets               = "${ var.ec2_subnets }"
   alb_allowed_ingress_cidrs = "${ var.alb_allowed_ingress_cidrs }"
-  alb_allowed_egress_cidrs  = "${ var.alb_allowed_egress_cidrs }"
 
   # ALB
   alb_certificate_arn = "${ var.alb_certificate_arn }"
