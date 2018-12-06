@@ -143,6 +143,7 @@ data "aws_iam_policy_document" "s3_vault_resources_bucket_policy" {
       "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/ssh_key/*",
       "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/root_key/*",
       "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/unseal_keys/*",
+      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/recovery_keys/*",
     ]
   }
 }
@@ -217,6 +218,20 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     resources = [
       "arn:aws:dynamodb:${ var.region }:${ data.aws_caller_identity.current.account_id }:table/${ var.dynamodb_table_name }",
       "arn:aws:dynamodb:${ var.region }:${ data.aws_caller_identity.current.account_id }:table/${ var.dynamodb_table_name }/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      "${ aws_kms_key.seal.arn }",
     ]
   }
 }

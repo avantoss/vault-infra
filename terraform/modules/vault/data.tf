@@ -29,6 +29,7 @@ data "template_file" "vault_config" {
     vault_dns_address      = "${ var.vault_dns_address }"
     vault_data_bucket_name = "${ aws_s3_bucket.vault_data.id }"
     dynamodb_table_name    = "${ var.dynamodb_table_name }"
+    vault_kms_seal_key_id  = "${ aws_kms_key.seal.key_id }"
   }
 }
 

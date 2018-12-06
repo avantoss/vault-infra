@@ -10,6 +10,10 @@ ui                = "true"
 api_addr      = "${ vault_dns_address }"
 cluster_addr  = "https://MY_IP_SET_IN_USERDATA:8201"
 
+seal "awskms" {
+  kms_key_id = "${ vault_kms_seal_key_id }"
+}
+
 listener "tcp" {
   address     = "127.0.0.1:9200"
   tls_disable = "true"
