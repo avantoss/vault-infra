@@ -47,22 +47,18 @@ There are a number of features unique to this module that make it attractive for
     vault operator init
     ```
 
-1. Copy all of the unseal keys and the root key locally and then to the correct folders in S3 using the CLI
+1. Copy all of the recovery keys and the root key locally and then to the correct folders in S3 using the CLI
 
     ```bash
     aws s3 cp root_key.txt s3://BUCKET_NAME/resources/root_key/root_key.txt --sse AES256
-    aws s3 cp unseal_key_one.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_one.txt --sse AES256
-    aws s3 cp unseal_key_two.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_two.txt --sse AES256
-    aws s3 cp unseal_key_three.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_three.txt --sse AES256
-    aws s3 cp unseal_key_four.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_four.txt --sse AES256
-    aws s3 cp unseal_key_five.txt s3://BUCKET_NAME/resources/unseal_keys/unseal_key_five.txt --sse AES256
+    aws s3 cp recovery_key_one.txt s3://BUCKET_NAME/resources/recovery_keys/recovery_key_one.txt --sse AES256
+    aws s3 cp recovery_key_two.txt s3://BUCKET_NAME/resources/recovery_keys/recovery_key_two.txt --sse AES256
+    aws s3 cp recovery_key_three.txt s3://BUCKET_NAME/resources/recovery_keys/recovery_key_three.txt --sse AES256
+    aws s3 cp recovery_key_four.txt s3://BUCKET_NAME/resources/recovery_keys/recovery_key_four.txt --sse AES256
+    aws s3 cp recovery_key_five.txt s3://BUCKET_NAME/resources/recovery_keys/recovery_key_five.txt --sse AES256
     ```
 
-1. Unseal Vault with three of the five keys
-
-    ```bash
-    vault operator unseal UNSEAL_KEY
-    ```
+1. Vault should automatically unseal using KMS
 
 1. Clear your history and exit
 
@@ -71,7 +67,6 @@ There are a number of features unique to this module that make it attractive for
     ```
 
 1. Remove the temporary SSH security group
-1. Repeat the last three steps for the other Vault instances
 1. Assign DNS to your ALB that matches the certificate that you are using
 1. Locally export your new Vault address. You can now start using Vault
 
@@ -115,9 +110,9 @@ This bucket is not encrypted because cross region replication does not support e
 
 ### S3 Resources Bucket
 
-We use a second S3 bucket to store all Vault resources, including access logs, SSL certs, unseal keys, the root key, the SSH key, and the Vault configuration file. The idea behind this bucket is that it stores all secrets necessary to get Vault up and running, which should store and manage all other secrets at the organization.
+We use a second S3 bucket to store all Vault resources, including access logs, SSL certs, unseal keys, recovery keys, the root key, the SSH key, and the Vault configuration file. The idea behind this bucket is that it stores all secrets necessary to get Vault up and running, which should store and manage all other secrets at the organization.
 
-To properly harden this configuration the SSL cert should only be issued for the exact domain that you will use to host Vault. Do not use a wildcard cert. If you plan on storing the SSH key to the Vault instances in this bucket make sure it is only used for those instances. Furthermore, while we support storing the root and unseal keys within this bucket, you're better off distributing them to trusted individuals or groups and not storing them all in one place.
+To properly harden this configuration the SSL cert should only be issued for the exact domain that you will use to host Vault. Do not use a wildcard cert. If you plan on storing the SSH key to the Vault instances in this bucket make sure it is only used for those instances. Furthermore, while we support storing the root and unseal/recovery keys within this bucket, you're better off distributing them to trusted individuals or groups and not storing them all in one place.
 
 Certain paths in this bucket enforce encryption, so you will need to upload with AES256 SSE. Cross region replication does not support other encryption methods.
 
@@ -127,15 +122,17 @@ S3 does not support locking and therefore cannot manage an HA Vault setup. Howev
 
 ### Automated Unsealing
 
-We do not support or recommend automated unsealing. However, this module makes it relatively easy to implement. You would need to modify the bucket permissions to let the Vault service read the unseal keys, and then modify the systemd file to unseal the service after a successful boot. A quick search should provide more direction.
+Vault 1.0.0 announced cloud auto unseal using KMS in open source. Using this method 'unseal keys' are now 'recovery keys' and unseals will happen
+automatically with the correct KMS key, permissions, and seal stanza. If you are upgrading to 1.0.0 and using this module, see this document for
+instructions on migrating to auto unseal: <https://www.vaultproject.io/docs/concepts/seal.html#seal-migration>.
 
 ### Node Failure
 
-If a node fails or even seals for whatever reason the simplest method of remediation is to simply terminate the instance. The ASG will spin up a fresh new instance that you can manually unseal.
+If a node fails or even seals for whatever reason the simplest method of remediation is to simply terminate the instance. The ASG will spin up a fresh new instance that will unseal automatically.
 
 ### AZ Failure
 
-In the event of an AZ failure Vault should automatically fail over to a backup node. The primary will start failing health checks, a new leader will be chosen and its health checks will start passing, and traffic will be routed to the new leader. This should all occur automatically in less than 60 seconds. Since an AZ failure will likely seal the old Vault leader you will need to terminate the failed node and unseal the new node that the ASG created in order to remain HA.
+In the event of an AZ failure Vault should automatically fail over to a backup node. The primary will start failing health checks, a new leader will be chosen and its health checks will start passing, and traffic will be routed to the new leader. This should all occur automatically in less than 60 seconds.
 
 ### Region Failure
 
