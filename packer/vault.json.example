@@ -2,8 +2,8 @@
   "variables": {
     "license" : "The MIT License (MIT)",
     "copyright" : "Copyright (c) 2014-2018 Avant, Sean Lingren",
-    "vault_version": "1.0.0",
-    "vault_version_checksum": "sha256:75afb647d2ebeb46aafbf147ed1f1b379f6b8c9f909550dc2d0976cf153e8aa6",
+    "vault_version": "1.0.2",
+    "vault_version_checksum": "sha256:5549714c24b61ea77a7afb30e1fbff6ec596cfd39dab7a2e6cf7e71432d616cc",
     "builder_region": "us-west-1",
     "builder_vpc_id": "vpc-xxxxxxxx",
     "builder_subnet_id": "subnet-xxxxxxxx",
