@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2018 Avant, Sean Lingren
+# Copyright (c) 2014-2019 Avant, Sean Lingren
 
 # Upload config to S3
 resource "aws_s3_bucket_object" "object" {
@@ -12,6 +12,6 @@ resource "aws_s3_bucket_object" "object" {
   # Depends on both buckets because we don't want to place until replication is set up
   depends_on = [
     "aws_s3_bucket.vault_resources",
-    "aws_s3_bucket.vault_resources_dr"
+    "aws_s3_bucket.vault_resources_dr",
   ]
 }
