@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2014-2018 Avant, Sean Lingren
+# Copyright (c) 2014-2019 Avant, Sean Lingren
 
 cluster_name      = "${ name_prefix }"
 max_lease_ttl     = "192h" # One week
@@ -9,6 +9,10 @@ ui                = "true"
 
 api_addr      = "${ vault_dns_address }"
 cluster_addr  = "https://MY_IP_SET_IN_USERDATA:8201"
+
+seal "awskms" {
+  kms_key_id = "${ vault_kms_seal_key_id }"
+}
 
 listener "tcp" {
   address     = "127.0.0.1:9200"
