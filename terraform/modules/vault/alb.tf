@@ -47,12 +47,14 @@ resource "aws_lb_listener" "public_https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-FS-2018-06"
-  certificate_arn   = "${ var.alb_certificate_arn }"
+  certificate_arn   = "${ aws_acm_certificate.public_acm.arn }"
 
   default_action {
     target_group_arn = "${ aws_lb_target_group.tg.arn }"
     type             = "forward"
   }
+
+  depends_on = ["aws_acm_certificate.public_acm"]
 }
 
 ############################
@@ -97,12 +99,14 @@ resource "aws_lb_listener" "https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-FS-2018-06"
-  certificate_arn   = "${ var.alb_certificate_arn }"
+  certificate_arn   = "${ aws_acm_certificate.private_acm.arn }"
 
   default_action {
     target_group_arn = "${ aws_lb_target_group.tg.arn }"
     type             = "forward"
   }
+
+  depends_on = ["aws_acm_certificate.private_acm"]
 }
 
 resource "aws_lb_target_group" "tg" {
