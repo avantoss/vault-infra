@@ -2,6 +2,62 @@
 #
 # Copyright (c) 2014-2019 Avant, Sean Lingren
 
+############################
+## Public ALB ##############
+############################
+resource "aws_lb" "public_alb" {
+  count           = "${var.public_alb ? 1 : 0}"
+  name            = "${ replace( var.name_prefix, "_", "-" ) }-public"
+  internal        = false
+  security_groups = ["${ aws_security_group.public_alb.id }"]
+  subnets         = ["${ var.alb_subnets }"]
+
+  access_logs {
+    enabled = true
+    bucket  = "${ aws_s3_bucket.vault_resources.id }"
+    prefix  = "logs/public_alb_access_logs"
+  }
+
+  tags = "${ merge(
+    map("Name", "${ var.name_prefix }_public"),
+    var.tags ) }"
+}
+
+# This block redirects HTTP requests to HTTPS
+resource "aws_lb_listener" "public_http" {
+  count             = "${var.public_alb ? 1 : 0}"
+  load_balancer_arn = "${ aws_lb.public_alb.arn }"
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_lb_listener" "public_https" {
+  count             = "${var.public_alb ? 1 : 0}"
+  load_balancer_arn = "${ aws_lb.public_alb.arn }"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-FS-2018-06"
+  certificate_arn   = "${ var.alb_certificate_arn }"
+
+  default_action {
+    target_group_arn = "${ aws_lb_target_group.tg.arn }"
+    type             = "forward"
+  }
+}
+
+############################
+## Private ALB #############
+############################
 resource "aws_lb" "alb" {
   name            = "${ replace( var.name_prefix, "_", "-" ) }"
   internal        = true

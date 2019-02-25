@@ -30,12 +30,18 @@ variable "tags" {
 ############################
 variable "vault_dns_address" {
   type        = "string"
+  default     = ""
   description = "The DNS address that vault will be accessible at"
 }
 
 variable "vpc_id" {
   type        = "string"
   description = "The ID of the VPC to use"
+}
+
+variable "public_alb" {
+  description = "Create public ALB"
+  default     = false
 }
 
 variable "alb_subnets" {
@@ -51,6 +57,11 @@ variable "ec2_subnets" {
 variable "alb_allowed_ingress_cidrs" {
   type        = "list"
   description = "A list of CIDRs to allow traffic into the ALB"
+}
+
+variable "public_alb_allowed_ingress_cidrs" {
+  type        = "list"
+  description = "A list of CIDRs to allow traffic into the public ALB"
 }
 
 ############################
@@ -113,4 +124,25 @@ variable "vault_data_bucket_name" {
 variable "dynamodb_table_name" {
   type        = "string"
   description = "The name of the dynamodb table that vault will create to coordinate HA"
+}
+
+############################
+## DNS #####################
+############################
+variable "route53_enabled" {
+  default     = false
+  description = "Creates Route53 DNS entries for Vault automatically"
+}
+
+variable "private_domain_name" {
+  description = "Private domain name for the internal ALB"
+}
+
+variable "public_domain_name" {
+  description = "Public domain name for the public ALB"
+}
+
+variable "zone_id" {
+  type        = "string"
+  description = "Zone ID for domain"
 }
