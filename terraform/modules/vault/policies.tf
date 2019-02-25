@@ -117,6 +117,7 @@ data "aws_iam_policy_document" "s3_vault_resources_bucket_policy" {
 
     resources = [
       "arn:aws:s3:::${ var.vault_resources_bucket_name }/logs/alb_access_logs/*",
+      "arn:aws:s3:::${ var.vault_resources_bucket_name }/logs/public_alb_access_logs/*",
     ]
   }
 

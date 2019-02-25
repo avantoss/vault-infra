@@ -43,7 +43,7 @@ resource "aws_acm_certificate" "public_acm" {
   validation_method = "DNS"
 
   tags = "${ merge(
-    map("Name", "${ var.name_prefix }_public"),
+    map("Name", "${ var.name_prefix }-public"),
     var.tags ) }"
 
   lifecycle {
