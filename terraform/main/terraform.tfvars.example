@@ -22,10 +22,8 @@ tags = {
 ## Route53 #################
 ############################
 # Route53 support is under a switch `route53_enabled`
-# If enabled and `vault_dns_address` not set, creates a DNS name for internal ALB and sets it as an `api_addr` in the Vault configuration
 route53_enabled     = true
-public_domain_name  = "vault.example.com" # Optional. Makes sense only in combination with `public_alb = true`
-private_domain_name = "vault-int.example.com"
+route53_domain_name = "vault.example.com"
 zone_id             = "AAA1BBB1CCC2DD" # Route53 zone id
 
 ############################

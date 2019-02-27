@@ -15,8 +15,7 @@ module "vault" {
   # Route53 support is under a switch `route53_enabled`
   # If enabled and `vault_dns_address` not set, creates a DNS name for internal ALB and sets it as an `api_addr` in the Vault configuration
   route53_enabled     = "${ var.route53_enabled }"
-  public_domain_name  = "${ var.public_domain_name }" # Optional. Makes sense only in combination with `public_alb = true`
-  private_domain_name = "${ var.private_domain_name }"
+  route53_domain_name = "${ var.route53_domain_name }"
   zone_id             = "${ var.zone_id }" # Route53 zone id
 
   # Networking
@@ -27,14 +26,7 @@ module "vault" {
   alb_allowed_ingress_cidrs = "${ var.alb_allowed_ingress_cidrs }"
 
   # ALB
-  alb_certificate_arn = "${ var.alb_certificate_arn }"
-
-  # Public ALB configuration block.
-  # Public ALB is under a switch `public_alb`
-  # If enabled creates a public ALB.
-  # In combination with `route53_enabled` creates public ALB and Route53 DNS entry for the public ALB
-  public_alb                       = "${ var.public_alb }"
-  public_alb_allowed_ingress_cidrs = "${ var.public_alb_allowed_ingress_cidrs }"
+  alb_certificate_arn = "${ var.alb_certificate_arn }" # Would be used unless route53 is enabled. Defaults to ""
 
   # EC2
   ami_id               = "${ var.ami_id }"

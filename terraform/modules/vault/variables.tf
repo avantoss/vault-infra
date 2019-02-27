@@ -39,11 +39,6 @@ variable "vpc_id" {
   description = "The ID of the VPC to use"
 }
 
-variable "public_alb" {
-  description = "Create public ALB"
-  default     = false
-}
-
 variable "alb_subnets" {
   type        = "list"
   description = "A list of subnets to launch the ALB in"
@@ -59,16 +54,12 @@ variable "alb_allowed_ingress_cidrs" {
   description = "A list of CIDRs to allow traffic into the ALB"
 }
 
-variable "public_alb_allowed_ingress_cidrs" {
-  type        = "list"
-  description = "A list of CIDRs to allow traffic into the public ALB"
-}
-
 ############################
 ## ALB #####################
 ############################
 variable "alb_certificate_arn" {
   type        = "string"
+  default     = ""
   description = "The ARN of the certificate to use on the ALB"
 }
 
@@ -134,12 +125,8 @@ variable "route53_enabled" {
   description = "Creates Route53 DNS entries for Vault automatically"
 }
 
-variable "private_domain_name" {
+variable "route53_domain_name" {
   description = "Private domain name for the internal ALB"
-}
-
-variable "public_domain_name" {
-  description = "Public domain name for the public ALB"
 }
 
 variable "zone_id" {

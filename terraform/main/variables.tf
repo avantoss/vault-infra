@@ -119,30 +119,13 @@ variable "dynamodb_table_name" {
 }
 
 ############################
-## Public ALB ##############
-############################
-variable "public_alb" {
-  description = "Whether enable Public ALB or not"
-}
-
-variable "public_alb_allowed_ingress_cidrs" {
-  type        = "list"
-  description = "List of whitelisted CIDRs for public ALB"
-}
-
-############################
 ## Route53 #################
 ############################
 variable "route53_enabled" {
   description = "Whether enable Route53 resources or not"
 }
 
-variable "public_domain_name" {
-  type        = "string"
-  description = "DNS name for Public ALB. Works only when both public_alb and route53 are enabled"
-}
-
-variable "private_domain_name" {
+variable "route53_domain_name" {
   type        = "string"
   description = "DNS name for the internal ALB"
 }

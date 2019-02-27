@@ -46,54 +46,6 @@ resource "aws_security_group_rule" "alb_out_8200" {
 }
 
 ############################
-## Public ALB ##############
-############################
-resource "aws_security_group" "public_alb" {
-  count       = "${var.public_alb ? 1 : 0}"
-  name_prefix = "${ var.name_prefix }-alb-public"
-  vpc_id      = "${ var.vpc_id }"
-
-  tags = "${ merge(
-    map("Name", "${ var.name_prefix }-alb-public"),
-    map("description", "Allow traffic into the public vault alb"),
-    var.tags ) }"
-}
-
-resource "aws_security_group_rule" "public_alb_in_80" {
-  count             = "${var.public_alb ? 1 : 0}"
-  type              = "ingress"
-  security_group_id = "${ aws_security_group.public_alb.id }"
-
-  protocol    = "tcp"
-  from_port   = 80
-  to_port     = 80
-  cidr_blocks = ["${ var.public_alb_allowed_ingress_cidrs }"]
-}
-
-resource "aws_security_group_rule" "public_alb_in_443" {
-  count             = "${var.public_alb ? 1 : 0}"
-  type              = "ingress"
-  security_group_id = "${ aws_security_group.public_alb.id }"
-
-  protocol    = "tcp"
-  from_port   = 443
-  to_port     = 443
-  cidr_blocks = ["${ var.public_alb_allowed_ingress_cidrs }"]
-}
-
-resource "aws_security_group_rule" "public_alb_out_8200" {
-  count             = "${var.public_alb ? 1 : 0}"
-  type              = "egress"
-  security_group_id = "${ aws_security_group.public_alb.id }"
-
-  protocol                 = "tcp"
-  from_port                = 8200
-  to_port                  = 8200
-  source_security_group_id = "${ aws_security_group.ec2.id }"
-}
-
-
-############################
 ## EC2 #####################
 ############################
 resource "aws_security_group" "ec2" {
