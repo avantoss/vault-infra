@@ -5,7 +5,7 @@
 resource "aws_route53_record" "www" {
   count   = "${ var.route53_enabled ? 1 : 0 }"
   zone_id = "${ var.zone_id }"
-  name    = "${ var.route53_domain_name }"
+  name    = "${ local.plain_domain }"
   type    = "A"
 
   alias {

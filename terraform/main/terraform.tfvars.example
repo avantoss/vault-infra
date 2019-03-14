@@ -23,7 +23,6 @@ tags = {
 ############################
 # Route53 support is under a switch `route53_enabled`
 route53_enabled     = true
-route53_domain_name = "vault.example.com"
 zone_id             = "AAA1BBB1CCC2DD" # Route53 zone id
 
 ############################

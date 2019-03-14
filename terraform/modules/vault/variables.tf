@@ -30,7 +30,6 @@ variable "tags" {
 ############################
 variable "vault_dns_address" {
   type        = "string"
-  default     = ""
   description = "The DNS address that vault will be accessible at"
 }
 
@@ -123,10 +122,6 @@ variable "dynamodb_table_name" {
 variable "route53_enabled" {
   default     = false
   description = "Creates Route53 DNS entries for Vault automatically"
-}
-
-variable "route53_domain_name" {
-  description = "Private domain name for the internal ALB"
 }
 
 variable "zone_id" {

@@ -124,8 +124,3 @@ variable "dynamodb_table_name" {
 variable "route53_enabled" {
   description = "Whether enable Route53 resources or not"
 }
-
-variable "route53_domain_name" {
-  type        = "string"
-  description = "DNS name for the internal ALB"
-}

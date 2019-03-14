@@ -4,11 +4,11 @@
 
 resource "aws_acm_certificate" "acm" {
   count             = "${ var.route53_enabled ? 1 : 0 }"
-  domain_name       = "${ var.route53_domain_name }"
+  domain_name       = "${ local.plain_domain }"
   validation_method = "DNS"
 
   tags = "${ merge(
-    map("Name", "${ var.name_prefix }_private"),
+    map("Name", "${ var.name_prefix }"),
     var.tags ) }"
 
   lifecycle {

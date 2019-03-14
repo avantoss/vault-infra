@@ -15,11 +15,10 @@ module "vault" {
   # Route53 support is under a switch `route53_enabled`
   # If enabled and `vault_dns_address` not set, creates a DNS name for internal ALB and sets it as an `api_addr` in the Vault configuration
   route53_enabled     = "${ var.route53_enabled }"
-  route53_domain_name = "${ var.route53_domain_name }"
   zone_id             = "${ var.zone_id }" # Route53 zone id
 
   # Networking
-  vault_dns_address         = "${ var.vault_dns_address }" # Optional. Defaults to ""
+  vault_dns_address         = "${ var.vault_dns_address }"
   vpc_id                    = "${ var.vpc_id }"
   alb_subnets               = "${ var.alb_subnets }"
   ec2_subnets               = "${ var.ec2_subnets }"
