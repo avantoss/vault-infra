@@ -70,7 +70,7 @@ There are a number of features unique to this module that make it attractive for
 
 1. Remove the temporary SSH security group
 1. Unless you've set `route53_enabled` to be `true`, you need to assign DNS to your ALB that matches the certificate that you are using
-1. This module can authmatically request a certificate from AWS ACM if `acm_enabled` if set to `true` (default: `false`). If you are using your own certificate, you can specify it's ARN with `alb_certificate_arn` variable
+1. This module can authmatically request a certificate from AWS ACM unless `alb_certificate_arn` is directly specified. If you are using your own certificate, you can specify it's ARN with `alb_certificate_arn` variable
 1. Locally export your new Vault address. You can now start using Vault
 
 ## Packer Architecture

@@ -128,11 +128,3 @@ variable "zone_id" {
   type        = "string"
   description = "Zone ID for domain"
 }
-
-############################
-## ACM #####################
-############################
-variable "acm_enabled" {
-  default = false
-  description = "Automatically creates certificate via AWS ACM"
-}

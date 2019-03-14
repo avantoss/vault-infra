@@ -26,11 +26,6 @@ route53_enabled     = true
 zone_id             = "AAA1BBB1CCC2DD" # Route53 zone id
 
 ############################
-## ACM #####################
-############################
-acm_enabled = true # Automatically creates a certificate via AWS ACM with DNS verification
-
-############################
 ## Networking ##############
 ############################
 vault_dns_address = "https://vault.example.com:443"

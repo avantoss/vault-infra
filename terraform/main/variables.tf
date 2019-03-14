@@ -124,11 +124,3 @@ variable "dynamodb_table_name" {
 variable "route53_enabled" {
   description = "Whether enable Route53 resources or not"
 }
-
-############################
-## ACM #####################
-############################
-variable "acm_enabled" {
-  default = false
-  description = "Automatically creates certificate via AWS ACM"
-}
