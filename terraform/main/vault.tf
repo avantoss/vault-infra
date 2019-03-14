@@ -25,7 +25,7 @@ module "vault" {
   alb_allowed_ingress_cidrs = "${ var.alb_allowed_ingress_cidrs }"
 
   # ALB
-  alb_certificate_arn = "${ var.alb_certificate_arn }" # Would be used unless route53 is enabled. Defaults to ""
+  alb_certificate_arn = "${ var.alb_certificate_arn }" # Would be used on ALB. If not specified, certificate would be requested via AWS ACM
 
   # EC2
   ami_id               = "${ var.ami_id }"
