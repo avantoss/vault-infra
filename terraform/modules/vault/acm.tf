@@ -14,8 +14,6 @@ resource "aws_acm_certificate" "acm" {
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = ["aws_route53_record.www"]
 }
 
 resource "aws_route53_record" "dns_acm_validation" {

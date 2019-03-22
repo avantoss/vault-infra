@@ -12,8 +12,6 @@ module "vault" {
   tags        = "${ var.tags }"
 
   # Route53
-  # Route53 support is under a switch `route53_enabled`
-  # If enabled and `vault_dns_address` not set, creates a DNS name for internal ALB and sets it as an `api_addr` in the Vault configuration
   route53_enabled     = "${ var.route53_enabled }"
   zone_id             = "${ var.zone_id }" # Route53 zone id
 

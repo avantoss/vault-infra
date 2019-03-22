@@ -122,5 +122,6 @@ variable "dynamodb_table_name" {
 ## Route53 #################
 ############################
 variable "route53_enabled" {
+  type        = "string"
   description = "Whether enable Route53 resources or not"
 }

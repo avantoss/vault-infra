@@ -58,8 +58,8 @@ variable "alb_allowed_ingress_cidrs" {
 ############################
 variable "alb_certificate_arn" {
   type        = "string"
-  default     = ""
   description = "The ARN of the certificate to use on the ALB"
+  default     = ""
 }
 
 ############################
@@ -120,8 +120,8 @@ variable "dynamodb_table_name" {
 ## DNS #####################
 ############################
 variable "route53_enabled" {
-  default     = false
   description = "Creates Route53 DNS entries for Vault automatically"
+  default     = false
 }
 
 variable "zone_id" {
