@@ -117,3 +117,11 @@ variable "dynamodb_table_name" {
   type        = "string"
   description = "The name of the dynamodb table that vault will create to coordinate HA"
 }
+
+############################
+## Route53 #################
+############################
+variable "route53_enabled" {
+  type        = "string"
+  description = "Whether enable Route53 resources or not"
+}

@@ -22,6 +22,8 @@ There are a number of features unique to this module that make it attractive for
 
 1. Modify the variables at the top of `packer/vault.json` to reflect your infrastructure
 1. From the Packer directory run `packer build vault.json`
+1. Make sure, you have an AWS SSH Keypair for the Vault instances. This module doesn't handle it. See [#3](https://github.com/avantoss/vault-infra/pull/3) for details.
+1. This module creates instances in private subnets by default. Make sure to create a [VPC Endpoint for Amazon S3](https://aws.amazon.com/blogs/aws/new-vpc-endpoint-for-amazon-s3/), [VPC Endpoint for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html), and [VPC Endpoint for KMS](https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html) in your VPC. These endpoints are required for an instance to be able to communicate with S3 and DynamoDB as Vault's backends and be able to communicate with KMS for auto-unseal feature. S3. See [#3](https://github.com/avantoss/vault-infra/pull/3) for details. Caveats: if you use external Auth methods e.g. [GitHub Auth Method](https://www.vaultproject.io/docs/auth/github.html), you will need AWS NAT gateways in each subnet as well
 1. From the example file, create a terraform.tfvars file with values that match your infrastructure
 1. If you are using remote state create a file named `terraform/main/remote_state.tf` with your configuration
 1. Run `terraform plan` followed by `terraform apply`
@@ -67,7 +69,8 @@ There are a number of features unique to this module that make it attractive for
     ```
 
 1. Remove the temporary SSH security group
-1. Assign DNS to your ALB that matches the certificate that you are using
+1. Unless you've set `route53_enabled` to be `true`, you need to assign DNS to your ALB that matches the certificate that you are using
+1. This module can automatically request a certificate from AWS ACM unless `alb_certificate_arn` is directly specified. If you are using your own certificate, you can specify it's ARN with `alb_certificate_arn` variable
 1. Locally export your new Vault address. You can now start using Vault
 
 ## Packer Architecture

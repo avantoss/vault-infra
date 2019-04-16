@@ -11,6 +11,10 @@ module "vault" {
   dr_region   = "${ var.dr_region }"
   tags        = "${ var.tags }"
 
+  # Route53
+  route53_enabled     = "${ var.route53_enabled }"
+  zone_id             = "${ var.zone_id }" # Route53 zone id
+
   # Networking
   vault_dns_address         = "${ var.vault_dns_address }"
   vpc_id                    = "${ var.vpc_id }"
@@ -19,7 +23,7 @@ module "vault" {
   alb_allowed_ingress_cidrs = "${ var.alb_allowed_ingress_cidrs }"
 
   # ALB
-  alb_certificate_arn = "${ var.alb_certificate_arn }"
+  alb_certificate_arn = "${ var.alb_certificate_arn }" # Would be used on ALB. If not specified, certificate would be requested via AWS ACM
 
   # EC2
   ami_id               = "${ var.ami_id }"

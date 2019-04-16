@@ -59,6 +59,7 @@ variable "alb_allowed_ingress_cidrs" {
 variable "alb_certificate_arn" {
   type        = "string"
   description = "The ARN of the certificate to use on the ALB"
+  default     = ""
 }
 
 ############################
@@ -113,4 +114,17 @@ variable "vault_data_bucket_name" {
 variable "dynamodb_table_name" {
   type        = "string"
   description = "The name of the dynamodb table that vault will create to coordinate HA"
+}
+
+############################
+## DNS #####################
+############################
+variable "route53_enabled" {
+  description = "Creates Route53 DNS entries for Vault automatically"
+  default     = false
+}
+
+variable "zone_id" {
+  type        = "string"
+  description = "Zone ID for domain"
 }
