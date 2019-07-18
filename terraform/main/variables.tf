@@ -125,3 +125,8 @@ variable "route53_enabled" {
   type        = "string"
   description = "Whether enable Route53 resources or not"
 }
+
+variable "zone_id" {
+  type        = "string"
+  description = "ID of the Route 53 zone"
+}
