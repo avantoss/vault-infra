@@ -11,7 +11,7 @@ resource "aws_launch_template" "lt" {
   user_data     = "${ base64encode( data.template_file.userdata.rendered ) }"
 
   iam_instance_profile {
-    name = "${ aws_iam_instance_profile.vault_ec2_instance_profile.id }"
+    name = "${ aws_iam_instance_profile.vault_ec2_instance_profile.name }"
   }
 
   block_device_mappings {
