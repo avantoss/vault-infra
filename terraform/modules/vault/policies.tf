@@ -1,5 +1,4 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2014-2019 Avant, Sean Lingren
 
 ############################
@@ -9,7 +8,7 @@ data "aws_iam_policy_document" "s3_trust_policy" {
   statement {
     effect = "Allow"
 
-    principals = {
+    principals {
       type        = "Service"
       identifiers = ["s3.amazonaws.com"]
     }
@@ -30,7 +29,7 @@ data "aws_iam_policy_document" "s3_vault_resources_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_resources.arn }",
+      aws_s3_bucket.vault_resources.arn,
     ]
   }
 
@@ -43,7 +42,7 @@ data "aws_iam_policy_document" "s3_vault_resources_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_resources.arn }/resources/*",
+      "${aws_s3_bucket.vault_resources.arn}/resources/*",
     ]
   }
 
@@ -56,7 +55,7 @@ data "aws_iam_policy_document" "s3_vault_resources_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_resources_dr.arn }/resources/*",
+      "${aws_s3_bucket.vault_resources_dr.arn}/resources/*",
     ]
   }
 }
@@ -71,7 +70,7 @@ data "aws_iam_policy_document" "s3_vault_data_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_data.arn }",
+      aws_s3_bucket.vault_data.arn,
     ]
   }
 
@@ -84,7 +83,7 @@ data "aws_iam_policy_document" "s3_vault_data_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_data.arn }/*",
+      "${aws_s3_bucket.vault_data.arn}/*",
     ]
   }
 
@@ -97,7 +96,7 @@ data "aws_iam_policy_document" "s3_vault_data_replicaton_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_data_dr.arn }/*",
+      "${aws_s3_bucket.vault_data_dr.arn}/*",
     ]
   }
 }
@@ -112,11 +111,11 @@ data "aws_iam_policy_document" "s3_vault_resources_bucket_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${ data.aws_elb_service_account.elb_sa.arn }"]
+      identifiers = [data.aws_elb_service_account.elb_sa.arn]
     }
 
     resources = [
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/logs/alb_access_logs/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/logs/alb_access_logs/*",
     ]
   }
 
@@ -139,11 +138,11 @@ data "aws_iam_policy_document" "s3_vault_resources_bucket_policy" {
     }
 
     resources = [
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/ssl/*",
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/ssh_key/*",
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/root_key/*",
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/unseal_keys/*",
-      "arn:aws:s3:::${ var.vault_resources_bucket_name }/resources/recovery_keys/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/resources/ssl/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/resources/ssh_key/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/resources/root_key/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/resources/unseal_keys/*",
+      "arn:aws:s3:::${var.vault_resources_bucket_name}/resources/recovery_keys/*",
     ]
   }
 }
@@ -155,7 +154,7 @@ data "aws_iam_policy_document" "ec2_trust_policy" {
   statement {
     effect = "Allow"
 
-    principals = {
+    principals {
       type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
     }
@@ -176,8 +175,8 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_data.arn }",
-      "${ aws_s3_bucket.vault_resources.arn }",
+      aws_s3_bucket.vault_data.arn,
+      aws_s3_bucket.vault_resources.arn,
     ]
   }
 
@@ -190,7 +189,7 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_resources.arn }/resources/*",
+      "${aws_s3_bucket.vault_resources.arn}/resources/*",
     ]
   }
 
@@ -204,7 +203,7 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     ]
 
     resources = [
-      "${ aws_s3_bucket.vault_data.arn }/*",
+      "${aws_s3_bucket.vault_data.arn}/*",
     ]
   }
 
@@ -216,8 +215,8 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     ]
 
     resources = [
-      "arn:aws:dynamodb:${ var.region }:${ data.aws_caller_identity.current.account_id }:table/${ var.dynamodb_table_name }",
-      "arn:aws:dynamodb:${ var.region }:${ data.aws_caller_identity.current.account_id }:table/${ var.dynamodb_table_name }/*",
+      "arn:aws:dynamodb:${var.region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}",
+      "arn:aws:dynamodb:${var.region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}/*",
     ]
   }
 
@@ -231,7 +230,7 @@ data "aws_iam_policy_document" "vault_ec2_policy" {
     ]
 
     resources = [
-      "${ aws_kms_key.seal.arn }",
+      aws_kms_key.seal.arn,
     ]
   }
 }

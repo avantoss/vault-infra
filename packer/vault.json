@@ -1,0 +1,71 @@
+{
+  "variables": {
+    "license": "The MIT License (MIT)",
+    "copyright": "Copyright (c) 2014-2019 Avant, Sean Lingren",
+    "vault_version": "1.2.3",
+    "vault_version_checksum": "sha256:fe15676404aff35cb45f7c957f90491921b9269d79a8f933c5a36e26a431bfc4",
+    "builder_region": "us-west-1",
+    "builder_vpc_id": "vpc-xxxxxxxx",
+    "builder_subnet_id": "subnet-xxxxxxxx",
+    "ami_regions": "us-west-1,us-west-2",
+    "ami_users": "123456789012,456789012345"
+  },
+  "builders": [
+    {
+      "name": "vault",
+      "type": "amazon-ebs",
+      "communicator": "ssh",
+      "ssh_username": "ec2-user",
+      "region": "{{ user `builder_region` }}",
+      "source_ami_filter": {
+        "filters": {
+          "name": "amzn2-ami-hvm-*-x86_64-gp2",
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
+        },
+        "owners": [
+          "amazon"
+        ],
+        "most_recent": true
+      },
+      "instance_type": "t3.small",
+      "vpc_id": "{{user `builder_vpc_id`}}",
+      "subnet_id": "{{user `builder_subnet_id`}}",
+      "spot_price": "auto",
+      "run_tags": {
+        "Name": "Vault {{user `vault_version`}} Builder",
+        "build_date": "{{ timestamp }}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      },
+      "run_volume_tags": {
+        "Name": "Vault {{user `vault_version`}} Builder",
+        "build_date": "{{ timestamp }}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      },
+      "ami_name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+      "ami_description": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+      "ami_users": "{{user `ami_users`}}",
+      "ami_regions": "{{user `ami_regions`}}",
+      "tags": {
+        "Name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+        "os": "Amazon Linux 2",
+        "build_date": "{{ timestamp }}",
+        "vault_version": "{{user `vault_version`}}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "./ansible/site.yml",
+      "extra_arguments": [
+        "--extra-vars",
+        "vault_version={{user `vault_version`}} vault_version_checksum={{user `vault_version_checksum`}}"
+      ]
+    }
+  ]
+}
