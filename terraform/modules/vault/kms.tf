@@ -1,3 +1,6 @@
+# The MIT License (MIT)
+# Copyright (c) 2014-2019 Avant, Sean Lingren
+
 resource "aws_kms_alias" "seal" {
   name          = "alias/${var.name_prefix}/seal"
   target_key_id = aws_kms_key.seal.key_id

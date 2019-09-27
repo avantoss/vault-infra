@@ -89,11 +89,7 @@ resource "aws_autoscaling_group" "asg" {
   ]
 
   tags = [
-    {
-      "key"                 = "Name"
-      "value"               = var.name_prefix
-      "propagate_at_launch" = "true"
-    },
-    data.null_data_source.asg_tags.*.outputs,
+    for k, v in var.tags :
+    { "key" : k, "value" : v, "propagate_at_launch" : "true" }
   ]
 }

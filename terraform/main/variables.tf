@@ -58,6 +58,7 @@ variable "alb_allowed_ingress_cidrs" {
 variable "alb_certificate_arn" {
   type        = string
   description = "The ARN of the certificate to use on the ALB"
+  default     = ""
 }
 
 ############################
@@ -129,4 +130,3 @@ variable "zone_id" {
   type        = string
   description = "ID of the Route 53 zone"
 }
-

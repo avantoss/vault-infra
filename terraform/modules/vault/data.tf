@@ -31,14 +31,3 @@ data "template_file" "vault_config" {
     vault_kms_seal_key_id  = aws_kms_key.seal.key_id
   }
 }
-
-# This block converts a standard map of tags to a list of maps of tags for ASGs
-data "null_data_source" "asg_tags" {
-  count = length(keys(var.tags))
-
-  inputs = {
-    key                 = element(keys(var.tags), count.index)
-    value               = element(values(var.tags), count.index)
-    propagate_at_launch = true
-  }
-}
