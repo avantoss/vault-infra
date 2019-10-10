@@ -1,0 +1,17 @@
+---
+
+- include: update_pkg.yml
+  tags: [vault]
+
+- include: install_epel.yml
+  when: ansible_os_family == 'RedHat'
+  tags: [vault]
+
+- include: install_pkg.yml
+  tags: [vault]
+
+- include: install_vault.yml
+  tags: [vault]
+
+- include: configure_vault.yml
+  tags: [vault]

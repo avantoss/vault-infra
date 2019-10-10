@@ -1,0 +1,53 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2019 Avant, Sean Lingren
+
+- name: Create the Vault Group
+  group:
+    name: vault
+    gid: 987
+    system: yes
+
+- name: Create the Vault User
+  user:
+    name: vault
+    uid: 987
+    system: yes
+    group: vault
+    createhome: no
+    home: /srv/vault/
+    shell: /sbin/nologin
+    comment: A service account to run Vault
+
+- name: Install Vault
+  block:
+    - name: Download Vault
+      get_url:
+        url: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip
+        dest: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
+        owner: root
+        group: root
+        mode: 0744
+        seuser: system_u
+        serole: object_r
+        setype: usr_t
+        selevel: s0
+        checksum: "{{ vault_version_checksum }}"
+
+    - name: Unarchive Vault
+      unarchive:
+        src: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
+        dest: /usr/bin
+        remote_src: True
+
+    - name: Set Vault Permissions
+      file:
+        path: /usr/bin/vault
+        state: file
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: bin_t
+        selevel: s0

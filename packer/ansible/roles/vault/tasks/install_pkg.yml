@@ -1,0 +1,12 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2019 Avant, Sean Lingren
+
+- name: Install Necessary Packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - wget
+    - unzip
+    - awscli

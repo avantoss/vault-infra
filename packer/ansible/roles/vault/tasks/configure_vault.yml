@@ -1,0 +1,59 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2019 Avant, Sean Lingren
+
+- name: Create the Vault Files and Folders
+  block:
+    - name: Main Folder
+      file:
+        path: /etc/vault
+        state: directory
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: etc_t
+        selevel: s0
+
+    - name: SSL Folder
+      file:
+        path: /etc/vault/ssl
+        state: directory
+        owner: root
+        group: vault
+        mode: 0755
+        seuser: system_u
+        serole: object_r
+        setype: cert_t
+        selevel: s0
+
+- name: Add the Vault Service
+  copy:
+    src: vault.service
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: vault
+    mode: 0755
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t
+    selevel: s0
+
+- name: Add Vault Global Env Vars
+  copy:
+    src: profile.d_vault.sh
+    dest: /etc/profile.d/vault.sh
+    owner: root
+    group: vault
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: bin_t
+    selevel: s0
+
+- name: Allow Vault to Lock Memory
+  capabilities:
+    state: present
+    path: /usr/bin/vault
+    capability: cap_ipc_lock=+ep
