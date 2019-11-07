@@ -1,15 +1,9 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2014-2019 Avant, Sean Lingren
 
 - name: Update all packages
   package:
     name: '*'
-    state: latest
-
-- name: Install EPEL
-  package:
-    name: "epel-release"
     state: latest
 
 - name: Install Necessary Packages
@@ -19,7 +13,6 @@
   with_items:
     - wget
     - unzip
-    - awscli
 
 - name: Create the Vault Group
   group:

@@ -1,9 +1,9 @@
 {
   "variables": {
-    "license" : "The MIT License (MIT)",
-    "copyright" : "Copyright (c) 2014-2019 Avant, Sean Lingren",
-    "vault_version": "1.0.2",
-    "vault_version_checksum": "sha256:5549714c24b61ea77a7afb30e1fbff6ec596cfd39dab7a2e6cf7e71432d616cc",
+    "license": "The MIT License (MIT)",
+    "copyright": "Copyright (c) 2014-2019 Avant, Sean Lingren",
+    "vault_version": "1.2.3",
+    "vault_version_checksum": "sha256:fe15676404aff35cb45f7c957f90491921b9269d79a8f933c5a36e26a431bfc4",
     "builder_region": "us-west-1",
     "builder_vpc_id": "vpc-xxxxxxxx",
     "builder_subnet_id": "subnet-xxxxxxxx",
@@ -14,46 +14,58 @@
     {
       "name": "vault",
       "type": "amazon-ebs",
+      "communicator": "ssh",
+      "ssh_username": "ec2-user",
       "region": "{{ user `builder_region` }}",
       "source_ami_filter": {
         "filters": {
-          "name": "CentOS Linux 7 x86_64 HVM EBS *"
+          "name": "amzn2-ami-hvm-*-x86_64-gp2",
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
         },
-        "owners": ["410186602215"],
+        "owners": [
+          "amazon"
+        ],
         "most_recent": true
       },
-      "instance_type": "t2.small",
-      "ssh_username": "centos",
+      "instance_type": "t3.small",
+      "vpc_id": "{{user `builder_vpc_id`}}",
+      "subnet_id": "{{user `builder_subnet_id`}}",
+      "spot_price": "auto",
+      "run_tags": {
+        "Name": "Vault {{user `vault_version`}} Builder",
+        "build_date": "{{ timestamp }}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      },
+      "run_volume_tags": {
+        "Name": "Vault {{user `vault_version`}} Builder",
+        "build_date": "{{ timestamp }}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      },
       "ami_name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
       "ami_description": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
       "ami_users": "{{user `ami_users`}}",
       "ami_regions": "{{user `ami_regions`}}",
-      "vpc_id": "{{user `builder_vpc_id`}}",
-      "subnet_id": "{{user `builder_subnet_id`}}",
-      "launch_block_device_mappings": [
-        {
-          "device_name": "/dev/sda1",
-          "volume_size": 12,
-          "volume_type": "gp2",
-          "delete_on_termination": true
-        }
-      ],
-      "tags":
-        {
-          "Name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
-          "os": "CentOS7",
-          "build_date": "{{ timestamp }}",
-          "vault_version": "{{user `vault_version`}}"
-        }
+      "tags": {
+        "Name": "Vault {{user `vault_version`}} AMI {{ timestamp }}",
+        "os": "Amazon Linux 2",
+        "build_date": "{{ timestamp }}",
+        "vault_version": "{{user `vault_version`}}",
+        "packer": true,
+        "packer_version": "{{ packer_version }}"
+      }
     }
   ],
   "provisioners": [
     {
       "type": "ansible",
-      "user": "centos",
-      "extra_arguments": [ "--extra-vars", "vault_version={{user `vault_version`}} vault_version_checksum={{user `vault_version_checksum`}}" ],
-      "ansible_env_vars": [ "ANSIBLE_SSH_ARGS='-o GSSAPIAuthentication=no -o UserKnownHostsFile=/dev/null'" ],
-      "playbook_file": "./ansible/site.yml"
+      "playbook_file": "./ansible/site.yml",
+      "extra_arguments": [
+        "--extra-vars",
+        "vault_version={{user `vault_version`}} vault_version_checksum={{user `vault_version_checksum`}}"
+      ]
     }
   ]
 }

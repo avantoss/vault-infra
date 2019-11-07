@@ -1,5 +1,4 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2014-2019 Avant, Sean Lingren
 
 cluster_name      = "${ name_prefix }"

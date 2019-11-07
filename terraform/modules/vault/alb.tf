@@ -1,27 +1,27 @@
 # The MIT License (MIT)
-#
 # Copyright (c) 2014-2019 Avant, Sean Lingren
 
 resource "aws_lb" "alb" {
-  name            = "${ replace( var.name_prefix, "_", "-" ) }"
+  name            = replace(var.name_prefix, "_", "-")
   internal        = true
-  security_groups = ["${ aws_security_group.alb.id }"]
-  subnets         = ["${ var.alb_subnets }"]
+  security_groups = [aws_security_group.alb.id]
+  subnets         = var.alb_subnets
 
   access_logs {
     enabled = true
-    bucket  = "${ aws_s3_bucket.vault_resources.id }"
+    bucket  = aws_s3_bucket.vault_resources.id
     prefix  = "logs/alb_access_logs"
   }
 
-  tags = "${ merge(
-    map("Name", "${ var.name_prefix }"),
-    var.tags ) }"
+  tags = merge(
+    { "Name" = var.name_prefix },
+    var.tags,
+  )
 }
 
 # This block redirects HTTP requests to HTTPS
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = "${ aws_lb.alb.arn }"
+  load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -37,23 +37,23 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = "${ aws_lb.alb.arn }"
+  load_balancer_arn = aws_lb.alb.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-FS-2018-06"
-  certificate_arn   = "${ var.alb_certificate_arn == "" ? aws_acm_certificate.acm.arn : var.alb_certificate_arn }"
+  certificate_arn   = var.alb_certificate_arn == "" ? aws_acm_certificate.acm[0].arn : var.alb_certificate_arn
 
   default_action {
-    target_group_arn = "${ aws_lb_target_group.tg.arn }"
+    target_group_arn = aws_lb_target_group.tg.arn
     type             = "forward"
   }
 }
 
 resource "aws_lb_target_group" "tg" {
-  name     = "${ replace( var.name_prefix, "_", "-" ) }"
+  name     = replace(var.name_prefix, "_", "-")
   port     = "8200"
   protocol = "HTTPS"
-  vpc_id   = "${ var.vpc_id }"
+  vpc_id   = var.vpc_id
 
   deregistration_delay = "10"
 
@@ -74,7 +74,8 @@ resource "aws_lb_target_group" "tg" {
     matcher             = "200"
   }
 
-  tags = "${ merge(
-    map("Name","${ var.name_prefix }"),
-    var.tags ) }"
+  tags = merge(
+    { "Name" = var.name_prefix },
+    var.tags,
+  )
 }
