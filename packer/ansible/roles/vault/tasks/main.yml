@@ -44,7 +44,7 @@
         serole: object_r
         setype: usr_t
         selevel: s0
-        checksum: "{{ vault_version_checksum }}"
+        checksum: "sha256:{{ vault_version_checksum }}"
 
     - name: Unarchive Vault
       unarchive:
