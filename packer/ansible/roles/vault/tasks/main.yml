@@ -69,7 +69,7 @@
 
     - name: cleanup vault zip
       file:
-        path: "/usr/local/src/packer_{{ vault_version }}_linux_amd64.zip"
+        path: "/usr/local/src/vault_{{ vault_version }}_linux_amd64.zip"
         state: absent
 
 # Create Vault files and directories
