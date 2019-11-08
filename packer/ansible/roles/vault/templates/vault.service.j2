@@ -17,7 +17,7 @@ SecureBits=keep-caps
 Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/bin/vault server -config=/etc/vault/
+ExecStart={{ vault_binary }} server -config={{ vault_config_dir }}
 KillSignal=SIGINT
 TimeoutStopSec=30s
 Restart=on-failure
