@@ -95,6 +95,22 @@ variable "asg_desired_capacity" {
 }
 
 ############################
+## OS ######################
+############################
+
+variable "vault_cert_dir" {
+  type        = string
+  description = "The directory on the OS to store Vault certificates"
+  default     = "/usr/local/etc/vault/tls"
+}
+
+variable "vault_config_dir" {
+  type        = string
+  description = "The directory on the OS to store the Vault configuration"
+  default     = "/usr/local/etc/vault"
+}
+
+############################
 ## S3 ######################
 ############################
 variable "vault_resources_bucket_name" {

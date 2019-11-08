@@ -25,8 +25,8 @@ listener "tcp" {
 
   tls_disable     = "false"
   tls_min_version = "tls12"
-  tls_cert_file   = "/etc/vault/ssl/cert.crt"
-  tls_key_file    = "/etc/vault/ssl/privkey.key"
+  tls_cert_file   = "${ vault_cert_dir }/cert.crt"
+  tls_key_file    = "${ vault_cert_dir }/privkey.key"
 
   tls_prefer_server_cipher_suites = "true"
 }
