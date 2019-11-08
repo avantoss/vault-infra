@@ -122,14 +122,6 @@
         setype: bin_t
         selevel: s0
 
-    - name: selinux - vault config directory
-      file:
-        path: /etc/vault
-        seuser: system_u
-        serole: object_r
-        setype: etc_t
-        selevel: s0
-
     - name: selinux - vault certificates directory
       file:
         path: "{{ vault_cert_dir }}"
@@ -138,12 +130,12 @@
         setype: cert_t
         selevel: s0
 
-    - name: selinux - vault systemd unit file
+    - name: selinux - vault config directory
       file:
-        path: /etc/systemd/system/vault.service
+        path: "{{ vault_config_dir }}" 
         seuser: system_u
         serole: object_r
-        setype: systemd_unit_file_t
+        setype: etc_t
         selevel: s0
 
     - name: selinux - vault profile.d
@@ -152,6 +144,14 @@
         seuser: system_u
         serole: object_r
         setype: bin_t
+        selevel: s0
+
+    - name: selinux - vault systemd unit file
+      file:
+        path: /etc/systemd/system/vault.service
+        seuser: system_u
+        serole: object_r
+        setype: systemd_unit_file_t
         selevel: s0
 
   when: ansible_os_family == "RedHat"
