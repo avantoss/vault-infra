@@ -1,0 +1,3 @@
+vault_binary_dir: "/usr/local/bin"
+vault_cert_dir: "/usr/local/etc/vault/tls"
+vault_config_dir: "/usr/local/etc/vault"

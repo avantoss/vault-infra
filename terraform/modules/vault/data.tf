@@ -14,6 +14,8 @@ data "template_file" "userdata" {
   vars = {
     name_prefix                 = var.name_prefix
     region                      = var.region
+    vault_cert_dir              = var.vault_cert_dir
+    vault_config_dir            = var.vault_config_dir
     vault_resources_bucket_name = aws_s3_bucket.vault_resources.id
     vault_data_bucket_name      = aws_s3_bucket.vault_data.id
   }
@@ -25,6 +27,7 @@ data "template_file" "vault_config" {
   vars = {
     name_prefix            = var.name_prefix
     region                 = var.region
+    vault_cert_dir         = var.vault_cert_dir
     vault_dns_address      = var.vault_dns_address
     vault_data_bucket_name = aws_s3_bucket.vault_data.id
     dynamodb_table_name    = var.dynamodb_table_name

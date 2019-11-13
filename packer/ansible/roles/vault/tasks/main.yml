@@ -14,6 +14,17 @@
     - wget
     - unzip
 
+- name: Install EPEL
+  package:
+    name: "epel-release"
+    state: present
+  when: ansible_distribution in ["CentOS", "RedHat"]
+
+- name: install aws cli
+  package:
+    name: awscli
+    state: present
+
 - name: Create the Vault Group
   group:
     name: vault
@@ -27,95 +38,120 @@
     system: yes
     group: vault
     createhome: no
-    home: /srv/vault/
+    home: "{{ vault_config_dir }}"
     shell: /sbin/nologin
     comment: A service account to run Vault
 
-- name: Install Vault
-  block:
-    - name: Download Vault
+# Install Vault
+- block:
+    - name: download vault zip
       get_url:
-        url: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip
-        dest: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
+        url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip"
+        dest: "/usr/local/src/vault_{{ vault_version }}_linux_amd64.zip"
         owner: root
         group: root
         mode: 0744
-        seuser: system_u
-        serole: object_r
-        setype: usr_t
-        selevel: s0
-        checksum: "{{ vault_version_checksum }}"
+        checksum: "sha256:{{ vault_version_checksum }}"
 
-    - name: Unarchive Vault
+    - name: unarchive vault zip
       unarchive:
-        src: /usr/src/vault_{{ vault_version }}_linux_amd64.zip
-        dest: /usr/bin
+        src: "/usr/local/src/vault_{{ vault_version }}_linux_amd64.zip"
+        dest: "{{ vault_binary_dir }}"
         remote_src: True
 
-    - name: Set Vault Permissions
+    - name: set permissions on vault binary
       file:
-        path: /usr/bin/vault
+        path: "{{ vault_binary_dir }}/vault"
         state: file
         owner: root
-        group: vault
+        group: root
         mode: 0755
+
+    - name: cleanup vault zip
+      file:
+        path: "/usr/local/src/vault_{{ vault_version }}_linux_amd64.zip"
+        state: absent
+
+# Create Vault files and directories
+- block:
+    - name: create vault config directory
+      file:
+        path: "{{ vault_config_dir }}"
+        state: directory
+        owner: root
+        group: vault
+        mode: 0750
+
+    - name: create vault certificates directory
+      file:
+        path: "{{ vault_cert_dir }}"
+        state: directory
+        owner: root
+        group: vault
+        mode: 0750
+
+- name: Add the Vault Service
+  template:
+    src: vault.service.j2
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add Vault Global Env Vars
+  template:
+    src: profile.d_vault.sh.j2
+    dest: /etc/profile.d/vault.sh
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Allow Vault to Lock Memory
+  capabilities:
+    state: present
+    path: "{{ vault_binary_dir }}/vault"
+    capability: cap_ipc_lock=+ep
+
+# ensure SELinux contexts if RedHat family
+- block:
+    - name: selinux - vault binary
+      file:
+        path: "{{ vault_binary_dir }}/vault"
         seuser: system_u
         serole: object_r
         setype: bin_t
         selevel: s0
 
-- name: Create the Vault Files and Folders
-  block:
-    - name: Main Folder
+    - name: selinux - vault certificates directory
       file:
-        path: /etc/vault
-        state: directory
-        owner: root
-        group: vault
-        mode: 0755
-        seuser: system_u
-        serole: object_r
-        setype: etc_t
-        selevel: s0
-
-    - name: SSL Folder
-      file:
-        path: /etc/vault/ssl
-        state: directory
-        owner: root
-        group: vault
-        mode: 0755
+        path: "{{ vault_cert_dir }}"
         seuser: system_u
         serole: object_r
         setype: cert_t
         selevel: s0
 
-- name: Add the Vault Service
-  copy:
-    src: vault.service
-    dest: /etc/systemd/system/vault.service
-    owner: root
-    group: vault
-    mode: 0755
-    seuser: system_u
-    serole: object_r
-    setype: systemd_unit_file_t
-    selevel: s0
+    - name: selinux - vault config directory
+      file:
+        path: "{{ vault_config_dir }}" 
+        seuser: system_u
+        serole: object_r
+        setype: etc_t
+        selevel: s0
 
-- name: Add Vault Global Env Vars
-  copy:
-    src: profile.d_vault.sh
-    dest: /etc/profile.d/vault.sh
-    owner: root
-    group: vault
-    mode: 0644
-    seuser: system_u
-    serole: object_r
-    setype: bin_t
-    selevel: s0
+    - name: selinux - vault profile.d
+      file:
+        path: /etc/profile.d/vault.sh
+        seuser: system_u
+        serole: object_r
+        setype: bin_t
+        selevel: s0
 
-- name: Allow Vault to Lock Memory
-  capabilities:
-    state: present
-    path: /usr/bin/vault
-    capability: cap_ipc_lock=+ep
+    - name: selinux - vault systemd unit file
+      file:
+        path: /etc/systemd/system/vault.service
+        seuser: system_u
+        serole: object_r
+        setype: systemd_unit_file_t
+        selevel: s0
+
+  when: ansible_os_family == "RedHat"
