@@ -21,5 +21,7 @@ jobs:
           PACKER_VERSION: "1.4.5"
       - name: Packer - Validate
         run: packer validate vault.json
+        working-directory: ./packer
       - name: Packer - Build Docker
         run: packer build -only=docker-amazonlinux2 vault.json
+        working-directory: ./packer
