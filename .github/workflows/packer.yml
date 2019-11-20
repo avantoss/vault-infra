@@ -1,0 +1,27 @@
+name: Packer
+
+on: push
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code - Checkout
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Packer - Install
+        run: |
+          wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip -O /tmp/packer.zip
+          sudo unzip /tmp/packer.zip -d /usr/local/bin
+          sudo chown root:root /usr/local/bin/packer
+          sudo chmod 755 /usr/local/bin/packer
+          rm -f /tmp/packer.zip
+        env:
+          PACKER_VERSION: "1.4.5"
+      - name: Packer - Validate
+        run: packer validate vault.json
+        working-directory: ./packer
+      - name: Packer - Build Docker
+        run: packer build -only=docker-amazonlinux2 vault.json
+        working-directory: ./packer
