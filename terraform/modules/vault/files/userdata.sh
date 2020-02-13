@@ -25,6 +25,8 @@ MYIP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 # Add My IP Address as cluster_address in Vault Configuration
 sed -i -e "s/MY_IP_SET_IN_USERDATA/$MYIP/g" ${ vault_config_dir }/config.hcl
 
+${ vault_additional_userdata }
+
 # Start Vault now and on boot
 systemctl enable vault
 systemctl start vault
