@@ -203,5 +203,5 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Authors
 
-This module was originally created at [Avant](https://github.com/avantcredit)
-by Sean Lingren, srlingren@gmail.com. Additional contributors include Kyle Nehring and Andrew Fox.
+This module was originally created at [Avant](https://github.com/avantoss)
+by Sean Lingren, sean@lingrino.com. Additional contributors include Kyle Nehring and Andrew Fox.

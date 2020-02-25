@@ -14,7 +14,5 @@ jobs:
         run: test -f LICENSE
       - name: Readme Exists
         run: test -f README.md
-      - name: Readme Lint
-        uses: actionshub/markdownlint@master
       - name: Gitignore Exists
         run: test -f .gitignore
