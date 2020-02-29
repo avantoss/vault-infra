@@ -180,7 +180,7 @@ For ease of use this module requires that you manually enter the AMI ID of the P
 
 This project is licensed under the MIT License:
 
-Copyright (c) 2014-2019, Avant, Sean Lingren
+Copyright (c) 2014-2020, Avant, Sean Lingren
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -203,5 +203,5 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Authors
 
-This module was originally created at [Avant](https://github.com/avantcredit)
-by Sean Lingren, srlingren@gmail.com. Additional contributors include Kyle Nehring and Andrew Fox.
+This module was originally created at [Avant](https://github.com/avantoss)
+by Sean Lingren, sean@lingrino.com. Additional contributors include Kyle Nehring and Andrew Fox.

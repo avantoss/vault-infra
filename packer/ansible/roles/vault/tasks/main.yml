@@ -1,9 +1,9 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2019 Avant, Sean Lingren
+# Copyright (c) 2014-2020 Avant, Sean Lingren
 
 - name: Update all packages
   package:
-    name: '*'
+    name: "*"
     state: latest
 
 - name: Install Necessary Packages
@@ -132,7 +132,7 @@
 
     - name: selinux - vault config directory
       file:
-        path: "{{ vault_config_dir }}" 
+        path: "{{ vault_config_dir }}"
         seuser: system_u
         serole: object_r
         setype: etc_t

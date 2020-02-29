@@ -1,0 +1,18 @@
+name: Repo
+
+on: push
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: License Exists
+        run: test -f LICENSE
+      - name: Readme Exists
+        run: test -f README.md
+      - name: Gitignore Exists
+        run: test -f .gitignore

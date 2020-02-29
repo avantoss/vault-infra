@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2019 Avant, Sean Lingren
+# Copyright (c) 2014-2020 Avant, Sean Lingren
 
 module "vault" {
   source = "../modules/vault"
@@ -39,4 +39,3 @@ module "vault" {
   # DynamoDB
   dynamodb_table_name = var.dynamodb_table_name
 }
-

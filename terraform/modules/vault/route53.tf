@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2019 Avant, Sean Lingren
+# Copyright (c) 2014-2020 Avant, Sean Lingren
 
 resource "aws_route53_record" "www" {
   count   = var.route53_enabled ? 1 : 0

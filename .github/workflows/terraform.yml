@@ -1,0 +1,26 @@
+name: Terraform
+
+on:
+  push:
+    paths:
+      - terraform/**
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code - Checkout
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Terraform - Install
+        run: |
+          wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O /tmp/terraform.zip
+          sudo unzip /tmp/terraform.zip -do /usr/local/bin
+          sudo chown root:root /usr/local/bin/terraform
+          sudo chmod 755 /usr/local/bin/terraform
+          rm -f /tmp/terraform.zip
+        env:
+          TERRAFORM_VERSION: "0.12.21"
+      - name: Terraform Format
+        run: terraform fmt -check -diff -recursive
