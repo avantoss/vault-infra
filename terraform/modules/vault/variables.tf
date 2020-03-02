@@ -113,7 +113,7 @@ variable "vault_config_dir" {
 variable "vault_additional_config" {
   type        = string
   description = "Additional content to include in the vault configuration file"
-  default     = " "
+  default     = ""
 }
 
 variable "vault_additional_userdata" {
