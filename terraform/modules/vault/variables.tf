@@ -119,7 +119,7 @@ variable "vault_additional_config" {
 variable "vault_additional_userdata" {
   type        = string
   description = "Additional content to include in the cloud-init userdata for the EC2 instances"
-  default     = " "
+  default     = ""
 }
 
 ############################
