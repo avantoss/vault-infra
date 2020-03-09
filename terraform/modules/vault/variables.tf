@@ -110,6 +110,18 @@ variable "vault_config_dir" {
   default     = "/usr/local/etc/vault"
 }
 
+variable "vault_additional_config" {
+  type        = string
+  description = "Additional content to include in the vault configuration file"
+  default     = ""
+}
+
+variable "vault_additional_userdata" {
+  type        = string
+  description = "Additional content to include in the cloud-init userdata for the EC2 instances"
+  default     = ""
+}
+
 ############################
 ## S3 ######################
 ############################

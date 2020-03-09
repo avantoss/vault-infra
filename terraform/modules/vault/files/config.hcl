@@ -46,3 +46,5 @@ ha_storage "dynamodb" {
   read_capacity  = "5"
   write_capacity = "5"
 }
+
+${ vault_additional_config }
