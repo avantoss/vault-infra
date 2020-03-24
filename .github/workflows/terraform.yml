@@ -16,7 +16,7 @@ jobs:
       - name: Terraform - Install
         run: |
           wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O /tmp/terraform.zip
-          sudo unzip /tmp/terraform.zip -o -d /usr/local/bin
+          sudo unzip /tmp/terraform.zip -d /usr/local/bin
           sudo chown root:root /usr/local/bin/terraform
           sudo chmod 755 /usr/local/bin/terraform
           rm -f /tmp/terraform.zip
