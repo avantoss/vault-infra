@@ -1,0 +1,143 @@
+>packer build -only=ec2-amazonlinux2 vault.json
+ec2-amazonlinux2: output will be in this color.
+
+==> ec2-amazonlinux2: Prevalidating any provided VPC information
+==> ec2-amazonlinux2: Prevalidating AMI Name: Vault 1.3.2 AMI 1587125863
+    ec2-amazonlinux2: Found Image ID: ami-0323c3dd2da7fb37d
+==> ec2-amazonlinux2: Creating temporary keypair: packer_5e999e67-a453-37f7-435e-a49b03c8107e
+==> ec2-amazonlinux2: Creating temporary security group for this instance: packer_5e999e6b-fc16-246a-f21a-7e1e65de1d6d
+==> ec2-amazonlinux2: Authorizing access to port 22 from [0.0.0.0/0] in the temporary security groups...
+==> ec2-amazonlinux2: Launching a spot AWS instance...
+==> ec2-amazonlinux2: Interpolating tags for spot instance...
+    ec2-amazonlinux2: Adding tag: "Name": "Vault 1.3.2 Builder"
+    ec2-amazonlinux2: Adding tag: "build_date": "1587125863"
+    ec2-amazonlinux2: Adding tag: "packer": "1"
+    ec2-amazonlinux2: Adding tag: "packer_version": "1.5.5"
+    ec2-amazonlinux2: Loading User Data File...
+    ec2-amazonlinux2: Creating Spot Fleet launch template...
+    ec2-amazonlinux2: Sending spot request ()...
+    ec2-amazonlinux2: Instance ID: i-084b54ea59f9ccac9
+==> ec2-amazonlinux2: Using ssh communicator to connect: 172.30.14.117
+==> ec2-amazonlinux2: Waiting for SSH to become available...
+==> ec2-amazonlinux2: Connected to SSH!
+==> ec2-amazonlinux2: Provisioning with Ansible...
+==> ec2-amazonlinux2: Executing Ansible: ansible-playbook --extra-vars packer_build_name=ec2-amazonlinux2 packer_builder_type=amazon-ebs -o IdentitiesOnly=yes -i /var/folders/6c/cvz1wq_54m31kkgfhmv_4c2c0000gn/T/packer-provisioner-ansible417477784 /Users/david/development/tst/vault-infra/packer/ansible/site.yml -e ansible_ssh_private_key_file=/var/folders/6c/cvz1wq_54m31kkgfhmv_4c2c0000gn/T/ansible-key571102429 --extra-vars vault_version=1.3.2 vault_version_checksum=6e72132de0421b74d909f50be1823fe57182694c4268ba9a38c31213d9497ec9
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: PLAY [Configure Vault] *********************************************************
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [Gathering Facts] *********************************************************
+    ec2-amazonlinux2: [WARNING]: Platform linux on host default is using the discovered Python
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2: interpreter at /usr/bin/python, but future installation of another Python
+    ec2-amazonlinux2: interpreter could change this. See https://docs.ansible.com/ansible/2.9/referen
+    ec2-amazonlinux2: ce_appendices/interpreter_discovery.html for more information.
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Update all packages] *********************************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Install Necessary Packages] **************************************
+    ec2-amazonlinux2: ok: [default] => (item=wget)
+    ec2-amazonlinux2: ok: [default] => (item=unzip)
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Install EPEL] ****************************************************
+    ec2-amazonlinux2: skipping: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : install aws cli] *************************************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Create the Vault Group] ******************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Create the Vault User] *******************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : download vault zip] **********************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : unarchive vault zip] *********************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : set permissions on vault binary] *********************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : cleanup vault zip] ***********************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : create vault config directory] ***********************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : create vault certificates directory] *****************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Add the Vault Service] *******************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Add Vault Global Env Vars] ***************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : Allow Vault to Lock Memory] **************************************
+    ec2-amazonlinux2: changed: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : selinux - vault binary] ******************************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : selinux - vault certificates directory] **************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : selinux - vault config directory] ********************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : selinux - vault profile.d] ***************************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: TASK [vault : selinux - vault systemd unit file] *******************************
+    ec2-amazonlinux2: ok: [default]
+    ec2-amazonlinux2:
+    ec2-amazonlinux2: PLAY RECAP *********************************************************************
+    ec2-amazonlinux2: default                    : ok=20   changed=11   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+    ec2-amazonlinux2:
+==> ec2-amazonlinux2: Creating AMI Vault 1.3.2 AMI 1587125863 from instance i-084b54ea59f9ccac9
+    ec2-amazonlinux2: AMI: ami-00ba1ee6d5c1913fa
+==> ec2-amazonlinux2: Waiting for AMI to become ready...
+==> ec2-amazonlinux2: Copying/Encrypting AMI (ami-00ba1ee6d5c1913fa) to other regions...
+    ec2-amazonlinux2: Copying to: us-east-2
+    ec2-amazonlinux2: Waiting for all copies to complete...
+==> ec2-amazonlinux2: Modifying attributes on AMI (ami-00ba1ee6d5c1913fa)...
+    ec2-amazonlinux2: Modifying: description
+    ec2-amazonlinux2: Modifying: users
+==> ec2-amazonlinux2: Modifying attributes on AMI (ami-0da13c31db8962e72)...
+    ec2-amazonlinux2: Modifying: description
+    ec2-amazonlinux2: Modifying: users
+==> ec2-amazonlinux2: Modifying attributes on snapshot (snap-038ec9c7b6585aa56)...
+==> ec2-amazonlinux2: Modifying attributes on snapshot (snap-08279635cbd3433cb)...
+==> ec2-amazonlinux2: Adding tags to AMI (ami-00ba1ee6d5c1913fa)...
+==> ec2-amazonlinux2: Tagging snapshot: snap-038ec9c7b6585aa56
+==> ec2-amazonlinux2: Creating AMI tags
+    ec2-amazonlinux2: Adding tag: "os": "Amazon Linux 2"
+    ec2-amazonlinux2: Adding tag: "build_date": "1587125863"
+    ec2-amazonlinux2: Adding tag: "vault_version": "1.3.2"
+    ec2-amazonlinux2: Adding tag: "packer": "1"
+    ec2-amazonlinux2: Adding tag: "packer_version": "1.5.5"
+    ec2-amazonlinux2: Adding tag: "Name": "Vault 1.3.2 AMI 1587125863"
+==> ec2-amazonlinux2: Creating snapshot tags
+==> ec2-amazonlinux2: Adding tags to AMI (ami-0da13c31db8962e72)...
+==> ec2-amazonlinux2: Tagging snapshot: snap-08279635cbd3433cb
+==> ec2-amazonlinux2: Creating AMI tags
+    ec2-amazonlinux2: Adding tag: "build_date": "1587125863"
+    ec2-amazonlinux2: Adding tag: "vault_version": "1.3.2"
+    ec2-amazonlinux2: Adding tag: "packer": "1"
+    ec2-amazonlinux2: Adding tag: "packer_version": "1.5.5"
+    ec2-amazonlinux2: Adding tag: "Name": "Vault 1.3.2 AMI 1587125863"
+    ec2-amazonlinux2: Adding tag: "os": "Amazon Linux 2"
+==> ec2-amazonlinux2: Creating snapshot tags
+==> ec2-amazonlinux2: Terminating the source AWS instance...
+==> ec2-amazonlinux2: Cleaning up any extra volumes...
+==> ec2-amazonlinux2: No volumes to clean up, skipping
+==> ec2-amazonlinux2: Deleting temporary security group...
+==> ec2-amazonlinux2: Deleting temporary keypair...
+Build 'ec2-amazonlinux2' finished.
+
+==> Builds finished. The artifacts of successful builds are:
+--> ec2-amazonlinux2: AMIs were created:
+us-east-1: ami-00ba1ee6d5c1913fa
+us-east-2: ami-0da13c31db8962e72

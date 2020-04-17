@@ -4,11 +4,11 @@
         "copyright": "Copyright (c) 2014-2020 Avant, Sean Lingren",
         "vault_version": "1.3.2",
         "vault_version_checksum": "6e72132de0421b74d909f50be1823fe57182694c4268ba9a38c31213d9497ec9",
-        "builder_region": "us-west-1",
-        "builder_vpc_id": "vpc-xxxxxxxx",
-        "builder_subnet_id": "subnet-xxxxxxxx",
-        "ami_regions": "us-west-1,us-west-2",
-        "ami_users": "123456789012,456789012345"
+        "builder_region": "us-east-1",
+        "builder_vpc_id": "vpc-69eb300e",
+        "builder_subnet_id": "subnet-2dd60071",
+        "ami_regions": "us-east-1,us-east-2",
+        "ami_users": "945362765384"
     },
     "builders": [
         {
