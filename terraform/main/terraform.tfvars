@@ -52,7 +52,7 @@ alb_allowed_ingress_cidrs = [
 ############################
 ## ALB #####################
 ############################
-alb_certificate_arn = "	arn:aws:acm:us-east-1:945362765384:certificate/2c8bfc92-8e84-415d-b933-9a108e7f5f40"
+alb_certificate_arn = "arn:aws:acm:us-east-1:945362765384:certificate/2c8bfc92-8e84-415d-b933-9a108e7f5f40"
 
 ############################
 ## EC2 #####################
