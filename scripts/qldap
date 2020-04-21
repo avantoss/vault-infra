@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import sys
+import ldap
+
+base = "OU=active-director,DC=active-directory,DC=infra,DC=tstllc,DC=net"
+user_base = "OU=Users,{}".format(base)
+group_base = "OU=Groups,{}".format(base)
+
+l = ldap.initialize('ldap://active-directory.infra.tstllc.net')
+username = "CN={},{}".format( sys.argv[1], user_base )
+password = sys.argv[2] 
+try:
+  l.protocol_version = ldap.VERSION3
+  l.simple_bind_s(username, password)
+  # query = "(sn={})".format( sys.argv[3] )
+  query = "(&(member=CN={},{})(objectClass=group))".format( sys.argv[3], user_base )
+  # query = "(&(objectClass=group))"
+  print( "Query: {}".format(query) )
+  # result = l.search_s(base, ldap.SCOPE_SUBTREE, query)
+  result = l.search_s(group_base, ldap.SCOPE_SUBTREE, query)
+  print( result )
+except Exception as error:
+  print( error )
