@@ -130,3 +130,14 @@ variable "zone_id" {
   type        = string
   description = "ID of the Route 53 zone"
 }
+
+############################
+## Config ##################
+############################
+variable "vault_additional_config" {
+  type        = string
+  description = "Additional content to include in the vault configuration file"
+  default     = ""
+}
+
+

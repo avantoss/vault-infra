@@ -38,4 +38,6 @@ module "vault" {
 
   # DynamoDB
   dynamodb_table_name = var.dynamodb_table_name
+
+  vault_additional_config = var.vault_additional_config
 }

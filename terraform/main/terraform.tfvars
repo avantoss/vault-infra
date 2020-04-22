@@ -75,3 +75,9 @@ vault_data_bucket_name      = "tstllc-vault-data"
 ## DynamoDB ################
 ############################
 dynamodb_table_name = "tstllc-vault-ha-coordination"
+
+vault_additional_config = <<EOF
+
+log_level = "debug"
+
+EOF

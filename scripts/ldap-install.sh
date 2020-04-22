@@ -17,5 +17,5 @@ vault write auth/ldap/config \
     groupattr="cn" \
     binddn="CN=vault,OU=Users,$base" \
     bindpass="$password" \
-    insecure_tls=false \
+    insecure_tls=true \
     starttls=true
