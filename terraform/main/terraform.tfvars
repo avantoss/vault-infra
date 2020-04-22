@@ -78,6 +78,6 @@ dynamodb_table_name = "tstllc-vault-ha-coordination"
 
 vault_additional_config = <<EOF
 
-log_level = "debug"
+log_level = "trace"
 
 EOF
