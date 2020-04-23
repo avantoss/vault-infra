@@ -1,0 +1,11 @@
+CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';
+GRANT SELECT, INSERT, DELETE ON book.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON cruise_dataload.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON email.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON feature.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON geography.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON locationservice.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON providererror.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON tours.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON TST.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON version.* TO '{{name}}'@'%';

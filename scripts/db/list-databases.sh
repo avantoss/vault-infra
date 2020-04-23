@@ -1,0 +1,1 @@
+vault list database/config/

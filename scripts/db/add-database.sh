@@ -1,18 +1,60 @@
-if [[ -z $6 ]] ; then
-    echo "Usage: $0 <database> <host> <port> <user> <password> <roles>..."
+
+function usage {
+    echo "Usage: $exe -d <database> -h <host> -n <port> -u <user> -p <password> [-x <prefix>] <roles>..."
+}
+
+database=""
+host=""
+port="3306"
+user="root"
+password=""
+prefix=""
+
+while getopts ":d:h:n:u:p:x:" opt; do
+    case $opt in
+        d) 
+            database="$OPTARG"
+            ;;
+        h) 
+            host="$OPTARG"
+            ;;
+        n)
+            port="$OPTARG"
+            ;;
+        u)
+            user="$OPTARG"
+            ;;
+        p)
+            password="$OPTARG"
+            ;;
+        x)
+            prefix="$OPTARG"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            ;; 
+    
+        :)
+            echo "Option -$OPTARG requires an argument" >&2
+            ;;
+    esac 
+done
+
+shift $((OPTIND-1))
+
+if [[ -z $database || -z $host || -z $password ]] ; then
+    usage
     exit 1
 fi
-database=$1
-host=$2
-port=$3
-user=$4
-password="$5"
-shift 5
+
 
 roles=""
 for role in "$@" ; do
     if [[ -n $roles ]] ; then
         roles="$roles,"
+    fi
+    if [[ -n $prefix ]] ; then
+        roles="${roles}${prefix}-"
     fi
     roles="${roles}${database}-${role}"
 done

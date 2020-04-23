@@ -1,2 +1,2 @@
 CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';
-GRANT SELECT ON *.* TO '{{name}}'@'%';
+GRANT SELECT, INSERT, DELETE ON *.* TO '{{name}}'@'%';

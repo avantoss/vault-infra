@@ -1,0 +1,11 @@
+CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';
+GRANT SELECT ON book.* TO '{{name}}'@'%';
+GRANT SELECT ON cruise_dataload.* TO '{{name}}'@'%';
+GRANT SELECT ON email.* TO '{{name}}'@'%';
+GRANT SELECT ON feature.* TO '{{name}}'@'%';
+GRANT SELECT ON geography.* TO '{{name}}'@'%';
+GRANT SELECT ON locationservice.* TO '{{name}}'@'%';
+GRANT SELECT ON providererror.* TO '{{name}}'@'%';
+GRANT SELECT ON tours.* TO '{{name}}'@'%';
+GRANT SELECT ON TST.* TO '{{name}}'@'%';
+GRANT SELECT ON version.* TO '{{name}}'@'%';
