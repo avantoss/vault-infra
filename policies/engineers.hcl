@@ -1,5 +1,5 @@
 
-path "database/creds/lower-*" {
+path "database/creds/lowers-*" {
     capabilities = [ "read" ]
 }
 

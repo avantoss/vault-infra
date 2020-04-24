@@ -1,5 +1,5 @@
 dir=$(dirname $0)
-secrets=$dir/../../terraform/.secrets/vault
+secrets=$dir/../../../terraform/.secrets/vault
 
 password=$(cat $secrets/vault_ad.pwd)
 rootca=$secrets/active-directory-root.pem
@@ -19,4 +19,5 @@ vault write auth/ldap/config \
     bindpass="$password" \
     certificate=@$rootca \
     insecure_tls=true \
-    starttls=true
+    starttls=true \
+    request_timeout=30s

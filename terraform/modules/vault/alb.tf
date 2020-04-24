@@ -6,6 +6,7 @@ resource "aws_lb" "alb" {
   internal        = true
   security_groups = [aws_security_group.alb.id]
   subnets         = var.alb_subnets
+  idle_timeout    = 90
 
   access_logs {
     enabled = true

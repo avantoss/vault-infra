@@ -1,14 +1,5 @@
 dir=$(dirname $0)
 
-if [[ -z $2 ]] ; then
-    echo "Usage: $0 <database> <role> [ttl] [max_ttl]" 
-    exit 1
-fi
-
-database=$1
-role=$2
-
-
 function usage {
     echo "Usage: $exe -d <database> -r <role> -t <ttl> -m <max-ttl> [-x <prefix>]"
 }
