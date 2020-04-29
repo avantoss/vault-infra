@@ -1,0 +1,27 @@
+<source>  
+  @type tail
+  path /var/log/vault/vault_audit.log
+  pos_file /var/log/td-agent/vault.audit_log.pos
+  <parse>
+    @type json
+  </parse>
+  tag s3.vault.audit
+</source>  
+
+<match s3.*.*>  
+  @type s3
+
+  aws_key_id {{ aws_access_key }}
+  aws_sec_key {{ aws_secret_key }}
+  s3_bucket {{ bucket }}
+  path logs/
+
+  <buffer>
+    @type file
+    path /var/log/td-agent/s3
+    timekey_wait 1m
+    chunk_limit_size 256m
+  </buffer>
+
+  time_slice_format %Y%m%d%H%M
+</match>  

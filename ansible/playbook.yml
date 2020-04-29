@@ -1,0 +1,52 @@
+- hosts: vault
+  remote_user: ec2-user
+  tasks:
+    - name: create log vault with vault permissions
+      file:
+        path: "/var/log/vault"
+        state: directory
+        owner: root
+        group: vault
+        mode: 0770
+    - name: Add or modify nofile soft limit for root
+      pam_limits:
+        domain: root
+        limit_type: soft
+        limit_item: nofile
+        value: 65536
+    - name: Add or modify nofile hard limit for root
+      pam_limits:
+        domain: root
+        limit_type: hard
+        limit_item: nofile
+        value: 65536
+    - name: Add or modify nofile soft limit for all
+      pam_limits:
+        domain: "*"
+        limit_type: soft
+        limit_item: nofile
+        value: 65536
+    - name: Add or modify nofile hard limit for all
+      pam_limits:
+        domain: "*"
+        limit_type: hard
+        limit_item: nofile
+        value: 65536
+    - name: download and install fluentd
+      shell: curl -sL https://toolbelt.treasuredata.com/sh/install-amazon2-td-agent3.sh | sh -
+    - name: create fluentd config file
+      template:
+        src: td-agent.conf.j2
+        dest: /etc/td-agent/td-agent.conf 
+        owner: root
+        group: root
+        mode: 0644
+    - name: enable service and ensure it is not masked
+      systemd:
+        name: td-agent
+        enabled: yes
+        masked: no
+    - name: make sure service is running
+      systemd:
+        state: started
+        name: td-agent
