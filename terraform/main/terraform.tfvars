@@ -57,7 +57,8 @@ alb_certificate_arn = "arn:aws:acm:us-east-1:945362765384:certificate/2c8bfc92-8
 ############################
 ## EC2 #####################
 ############################
-ami_id        = "ami-00ba1ee6d5c1913fa"
+# ami_id        = "ami-00ba1ee6d5c1913fa"
+ami_id        = "ami-0dd0f081597dd12ed"
 instance_type = "r4.large"
 ssh_key_name  = "vault-ssh-key"
 
