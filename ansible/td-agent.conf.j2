@@ -14,7 +14,7 @@
   aws_key_id {{ aws_access_key }}
   aws_sec_key {{ aws_secret_key }}
   s3_bucket {{ bucket }}
-  path logs/
+  path "hosts/#{Socket.gethostname}/"
 
   <buffer>
     @type file
