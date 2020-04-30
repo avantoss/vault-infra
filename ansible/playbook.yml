@@ -1,5 +1,10 @@
 - hosts: vault
   remote_user: ec2-user
+  become: yes
+  vars:
+    bucket: "tstllc-vault-audit"
+  vars_files: 
+    - config.yml
   tasks:
     - name: create log vault with vault permissions
       file:
