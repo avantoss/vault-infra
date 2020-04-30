@@ -6,3 +6,4 @@
   become: yes
   roles:
     - vault
+    - fluentd

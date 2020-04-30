@@ -8,7 +8,8 @@
         "builder_vpc_id": "vpc-69eb300e",
         "builder_subnet_id": "subnet-2dd60071",
         "ami_regions": "us-east-1,us-east-2",
-        "ami_users": "945362765384"
+        "ami_users": "945362765384",
+        "ansible_vault_password": ""
     },
     "builders": [
         {
@@ -78,6 +79,7 @@
             "type": "ansible",
             "playbook_file": "./ansible/site.yml",
             "extra_arguments": [
+                "--vault-password-file", "../../terraform/.secrets/ansible-vault.pwd",
                 "--extra-vars",
                 "vault_version={{user `vault_version`}} vault_version_checksum={{user `vault_version_checksum`}}"
             ]
