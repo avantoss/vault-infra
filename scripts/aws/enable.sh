@@ -1,0 +1,1 @@
+vault secrets enable aws
