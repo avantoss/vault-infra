@@ -1,0 +1,2 @@
+CREATE USER '{{name}}'@'172.30.14.%' IDENTIFIED BY '{{password}}';
+GRANT SELECT, INSERT, DELETE ON *.* TO '{{name}}'@'172.30.14.%';
