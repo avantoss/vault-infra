@@ -1,0 +1,12 @@
+CREATE USER '{{name}}'@'172.30.14.%' IDENTIFIED BY '{{password}}';
+GRANT SELECT ON TST.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON book.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON geography.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON tours.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON feature.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON feature_blue.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON feature_green.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON version.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON email.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON locationservice.* TO '{{name}}'@'172.30.14.%';
+GRANT SELECT ON providererror.* TO '{{name}}'@'172.30.14.%';
