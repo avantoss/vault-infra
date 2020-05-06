@@ -3,6 +3,6 @@ path "database/creds/lowers-*" {
     capabilities = [ "read" ]
 }
 
-path "database/creds/prod-readonly" {
+path "database/creds/prod-aws-dev" {
     capabilities = [ "read" ]
 }
