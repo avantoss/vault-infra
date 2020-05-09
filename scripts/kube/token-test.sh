@@ -17,8 +17,8 @@ echo "{
 }" > $payload
 
 set -x
-cat $payload
-curl -v \
+# cat $payload
+curl \
     --request POST \
     --data @${payload} \
     https://vault.tstllc.net/v1/auth/$path/login

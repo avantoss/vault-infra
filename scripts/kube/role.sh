@@ -51,7 +51,7 @@ if [[ -z $cluster || -z $namespace || -z $role || -z $policies ]] ; then
     exit 1
 fi
 
-path="kube-${cluster}-${namespace}"
+path="kube-${cluster}"
 if [[ -n $suffix ]] ; then
     path="${path}-${suffix}"
 fi

@@ -42,7 +42,7 @@ fi
 
 dir=$(dirname $0)
 
-path="kube-${cluster}-${namespace}"
+path="kube-${cluster}"
 if [[ -n $suffix ]] ; then
     path="${path}-${suffix}"
 fi
