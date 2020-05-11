@@ -4,7 +4,7 @@ kube().pod( "kubernetes", "kubernetes-vault-test" ).
     withServiceAccount( "jenkins" ).
 node {
     stage('secret') {
-        String luggage = vault().get( "secret/data/luggage" )
+        String luggage = vault().secret( "secret/data/luggage" )
         echo "Got secret: ${luggage}"
     }
 }
