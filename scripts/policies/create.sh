@@ -1,8 +1,8 @@
 dir=$(dirname $0)
 policies=$dir/../../policies
 
-groups="devops engineers dba support kube"
+. $dir/../vault.inc
 
-for policy in $groups ; do
+for policy in $VAULT_GROUPS ; do
     vault policy write $policy $policies/${policy}.hcl
 done

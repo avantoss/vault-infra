@@ -1,7 +1,7 @@
 dir=$(dirname $0)
 
-groups="devops engineers dba support"
+. $dir/../vault.inc
 
-for group in $groups ; do
+for group in $VAULT_DIRECTORY_GROUPS ; do
     vault write auth/ldap/groups/$group policies=$group
 done

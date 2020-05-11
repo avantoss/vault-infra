@@ -1,8 +1,4 @@
-if [[ -z $2 ]] ; then
-    echo "Usage: $0 <namespace> <account>"
-    exit 1
-fi
-namespace=$1
-account=$2
+namespace="default"
+account="vault-tokenreview"
 
 kubectl -n $namespace create serviceaccount $account

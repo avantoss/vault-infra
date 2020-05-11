@@ -49,6 +49,7 @@ fi
 
 set -x
 
+$dir/token-account.sh 
 $dir/token-rbac.sh $namespace $account
 
 vault auth enable -path=$path kubernetes
