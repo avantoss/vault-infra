@@ -1,3 +1,6 @@
+dir=$(dirname $0)
+. $dir/../vault.inc
+
 function usage {
     echo "Usage: $exe -d <database> -r <role> [-x <prefix>]"
 }
