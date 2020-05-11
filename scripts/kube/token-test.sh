@@ -4,20 +4,25 @@
 # Copy+Paste with: cat - > token-test.sh  then Ctrl+D (EOF)
 #
 if [[ -z $2 ]] ; then
-    echo "Usage: $0 <path> <role>"
+    echo "Usage: $0 <path> <role> [token]"
     exit 1
 fi
 path=$1
 role=$2
 payload=/tmp/payload.json
-token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+if [[ -n $3 ]] ; then
+    token=$3
+else 
+    token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+fi
+
 echo "{
-  \"role\": \"reader\",
+  \"role\": \"$role\",
   \"jwt\": \"$token\"
 }" > $payload
 
 set -x
-# cat $payload
+cat $payload
 curl \
     --request POST \
     --data @${payload} \
