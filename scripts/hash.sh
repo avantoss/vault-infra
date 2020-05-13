@@ -7,6 +7,6 @@ value="$2"
 
 set -x
 curl -s -XPOST \
-    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --header "X-Vault-Token: $(vault print token)" \
     -d "{ \"input\": \"$value\" }" \
     $VAULT_ADDR/v1/sys/audit-hash/$path | jq '.'

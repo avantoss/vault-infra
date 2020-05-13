@@ -8,8 +8,9 @@ function usage {
 database=""
 role=""
 prefix=""
+opts=""
 
-while getopts ":d:r:t:m:x:" opt; do
+while getopts ":d:r:t:m:x:z" opt; do
     case $opt in
         d) 
             database="$OPTARG"
@@ -19,6 +20,9 @@ while getopts ":d:r:t:m:x:" opt; do
             ;;
         x)
             prefix="$OPTARG"
+            ;;
+        z) 
+            opts="$opts -output-curl-string"
             ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
@@ -43,4 +47,4 @@ if [[ -n $prefix ]] ; then
 fi
 
 set -x
-vault read database/creds/${full_role}
+vault read $opts database/creds/${full_role}
