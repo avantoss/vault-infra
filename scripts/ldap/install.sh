@@ -1,7 +1,7 @@
 dir=$(dirname $0)
 secrets=$dir/../../../terraform/.secrets/vault
 
-password=$(cat $secrets/vault_ad.pwd)
+password=$(cat $secrets/vault-ad.pwd)
 rootca=$secrets/active-directory-root.pem
 
 base="OU=active-director,DC=active-directory,DC=infra,DC=tstllc,DC=net" 

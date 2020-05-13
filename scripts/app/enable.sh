@@ -1,0 +1,1 @@
+vault auth enable approle
