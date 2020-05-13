@@ -4,9 +4,12 @@ kube().pod( "kubernetes", "kubernetes-vault-test" ).
     withServiceAccount( "jenkins" ).
 node {
     stage('secret') {
-        def secrets = [
-            path: 'secret/data/luggage', , secretValues: [
-                [envVar: 'luggage', vaultKey: 'combination']
+        def secrets = [ 
+            [ 
+                path: 'secret/data/luggage',
+                secretValues: [ 
+                    [envVar: 'luggage', vaultKey: 'combination'] 
+                ] 
             ]
         ]
         vault().withSecrets( secrets ) {
