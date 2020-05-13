@@ -13,6 +13,12 @@ node {
             ]
         ]
         vault().withSecrets( secrets ) {
+            if( env.luggage == '12345' ) {
+                echo "Got expected secret"
+            }
+            else {
+                echo "Did not get expected value"
+            }
             sh 'echo $luggage'
         } 
     }
