@@ -6,7 +6,7 @@ node {
     stage('secret') {
         def secrets = [ 
             [ 
-                path: 'secret/data/luggage',
+                path: 'secret/luggage',
                 secretValues: [ 
                     [envVar: 'luggage', vaultKey: 'combination'] 
                 ] 
