@@ -4,8 +4,7 @@ if [[ -z $1 ]] ; then
 fi
 
 secret=$1
-shift 1
+shift 
 
-set -x
 vault kv delete "$@" secret/$secret 
 

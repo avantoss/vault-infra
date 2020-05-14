@@ -7,5 +7,6 @@ secret=$1
 value="$2"
 shift 2
 
-vault kv put secret/$secret "value=$value" "$@"
+dir=$(dirname $0)
+$dir/secret.sh $secret "value=$value" "$@"
 

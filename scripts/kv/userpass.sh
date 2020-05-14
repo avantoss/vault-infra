@@ -8,5 +8,5 @@ user=$2
 password="$3"
 shift 3
 
-vault kv put secret/$secret user=$user "password=$password" "$@"
-
+dir=$(dirname $0)
+$dir/secret.sh $secret user=$user "password=$password" "$@"
