@@ -1,6 +1,6 @@
 dir=$(dirname $0)
 
-roles="aws-dev aws-dev-full aws-dba"
+roles="aws-dev aws-dev-full aws-dba aws-hotel"
 prod="mysql.prod.infra.tstllc.net"
 
 echo -n db_username: 

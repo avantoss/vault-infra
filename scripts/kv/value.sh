@@ -8,5 +8,5 @@ value="$2"
 shift 2
 
 dir=$(dirname $0)
-$dir/secret.sh $secret "value=$value" "$@"
+$dir/put.sh $secret "value=$value" "$@"
 

@@ -9,4 +9,4 @@ password="$3"
 shift 3
 
 dir=$(dirname $0)
-$dir/secret.sh $secret user=$user "password=$password" "$@"
+$dir/put.sh $secret user=$user "password=$password" "$@"
