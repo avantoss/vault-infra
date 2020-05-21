@@ -1,0 +1,11 @@
+# Number of keys required to unseal or generate root
+threshold: 2
+
+# Names (or parts of name) that identify users in a GPG key store
+# These are users that will be given unseal keys encrypted with GPG
+users:
+  - david.cox@tstllc.net
+  - robert.foster@tstllc.net
+  - bart.gunderman@tstllc.net
+  - ptarrant@gmail.com
+  - cyn.armistead@tstllc.net

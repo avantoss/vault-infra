@@ -12,6 +12,7 @@ cluster_addr  = "https://MY_IP_SET_IN_USERDATA:8201"
 seal "awskms" {
   region     = "${ region }"
   kms_key_id = "${ vault_kms_seal_key_id }"
+  disabled = "true"
 }
 
 listener "tcp" {

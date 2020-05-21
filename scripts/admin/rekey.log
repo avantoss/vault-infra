@@ -1,0 +1,33 @@
+Rekey operation nonce: ce17c828-4525-ec40-2c6f-1b30efe3ed6d
+Unseal Key (will be hidden): 
+
+Key 1: AAAAA
+Key 2: BBBBB
+Key 3: CCCCC
+Key 4: DDDDD
+Key 5: EEEEE
+
+Operation nonce: ce17c828-4525-ec40-2c6f-1b30efe3ed6d
+
+Vault has created a new key, split into 5 key shares and a key threshold of 2.
+These will not be active until after verification is complete. Please securely
+distribute the key shares printed above. When Vault is re-sealed, restarted,
+or stopped, you must supply at least 2 of these keys to unseal it before it
+can start servicing requests.
+
+Again, these key shares are _not_ valid until verification is performed.
+Do not lose or discard your current key shares until after verification
+is complete or you will be unable to unseal Vault. If you cancel the rekey
+process or seal Vault before verification is complete the new shares will be
+discarded and the current shares will remain valid.
+
+The current verification status, including initial nonce, is shown below.
+
+Key                      Value
+---                      -----
+Started                  true
+New Shares               5
+New Threshold            2
+Verification Nonce       2b78b9ab-59f2-ee00-c8af-e937051d2507
+Verification Progress    0/2
+

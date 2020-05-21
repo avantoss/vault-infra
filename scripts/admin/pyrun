@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ! which realpath > /dev/null ; then
+    >&2 echo "realpath not available: install coreutils"
+    exit 1
+fi
+
+dir=$(dirname $0)
+pydir=$(realpath $dir/python)
+py=$1
+shift
+
+export PYTHONPATH=$PYTHONPATH:$pydir
+
+if which pipenv > /dev/null ; then
+    export PIPENV_PIPFILE=$(realpath $dir/Pipfile)
+    pipenv run $pydir/$py "$@"
+else
+    $pydir/$py "$@"
+fi
