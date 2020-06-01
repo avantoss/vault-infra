@@ -96,7 +96,6 @@ def add_root_options( subs ):
     spp.set_defaults(fn=process_root_init)
 
     spp = sps.add_parser('add', help='verify a new key to the rekey operation')
-    spp.add_argument('otp', help="one-time password")
     spp.add_argument('nonce', help="nonce")
     spp.add_argument('--key', '-k', help="key plaintext")
     spp.add_argument('--file', '-f', help="encrypted keyfile")
@@ -247,11 +246,12 @@ def process_root_init( key, file, **_ ):
 
 def root_add( key, nonce ):
     cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
-    run( cmd, key )
+    return run( cmd, key )
 
 def process_root_add( key, file, nonce, **_ ):
     inp = get_user_key( file, key )
-    root_add( inp, nonce )
+    out, err = root_add( inp, nonce )
+    print( out )
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
