@@ -64,7 +64,6 @@ def add_rekey_options( subs ):
     spp.add_argument('--test', '-t', action='store_true', help="run code through test file to mimic real rekey")
     spp.set_defaults(fn=process_rekey_add)
 
-
     spp = sps.add_parser('verify', help='verify a new key to the rekey operation')
     spp.add_argument('--config', '-c', default=os.path.join(root, "vadmin.yml"), help="number of shards required to unseal")
     spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
