@@ -7,6 +7,6 @@ RUN pip install python-gnupg requests ruamel.yaml
 
 WORKDIR /opt/vault-infra
 
-COPY ./ /opt/vault-infra/
+COPY scripts/admin /opt/vault-infra/
 
 ENTRYPOINT ["/opt/vault-infra/vadmin" ]
