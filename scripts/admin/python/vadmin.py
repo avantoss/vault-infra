@@ -58,11 +58,21 @@ def add_rekey_options( subs ):
 
     spp = sps.add_parser('add', help='add a new key to the rekey operation')
     spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to unseal")
-    spp.add_argument('--nonce', '-n', help="nonce from rekey -init")
+    spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
     spp.add_argument('--key', '-k', help="key plaintext")
     spp.add_argument('--file', '-f', help="encrypted keyfile")
     spp.add_argument('--test', '-t', action='store_true', help="run code through test file to mimic real rekey")
     spp.set_defaults(fn=process_rekey_add)
+
+
+    spp = sps.add_parser('verify', help='verify a new key to the rekey operation')
+    spp.add_argument('--config', '-c', default=os.path.join(root, "vadmin.yml"), help="number of shards required to unseal")
+    spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
+    spp.add_argument('--key', '-k', help="key plaintext")
+    spp.add_argument('--file', '-f', help="encrypted keyfile")
+    spp.add_argument('--test', '-t', action='store_true', help="run code through test file to mimic real rekey")
+    spp.set_defaults(fn=process_rekey_verify)
+
 
 def get_user_key( user, keys ):
     ret = None
@@ -153,15 +163,15 @@ def get_decrypted_key( file ):
     passphrase = get_passphrase()
     with open( file, "rb") as fd:
         encrypted = fd.read()
-        log.debug( "process_rekey_add: encrypted key: {}".format(encrypted) )
+        log.debug( "get_decrypted_key: encrypted key: {}".format(encrypted) )
         decrypted = gpg.decrypt( b64dec(encrypted), passphrase=passphrase )
         if decrypted.ok:
             ret = decrypted.data.decode('utf-8')
-            log.debug( "process_rekey_add: decrypted key: {}".format(input) )
+            log.debug( "get_decrypted_key: decrypted key: {}".format(decrypted) )
         else:
             raise Exception( "Failed decrypting: {} : {}".format(decrypted.status,decrypted.stderr) )
 
-    return ret
+        return ret
 
 def process_rekey_add( config, key, file, nonce, test, **_ ):
     cfg = yu.yaml_load_file( config )
@@ -174,9 +184,9 @@ def process_rekey_add( config, key, file, nonce, test, **_ ):
         if file:
             input = get_decrypted_key( file )
         elif key:
-            input = key.encode('utf-8')
+            input = key
 
-    keys = run_command_and_parse_keys( cmd, input )
+    keys = run_command_and_parse_keys( cmd, input.encode('utf-8') )
 
     if keys:
         if len(keys) == len(users):
@@ -186,6 +196,25 @@ def process_rekey_add( config, key, file, nonce, test, **_ ):
             log.error( "Key length does not match user length: {} != {}".format(users, keys) )
     else:
         log.info( "No keys returned" )
+
+
+def process_rekey_verify( config, key, file, nonce, test, **_ ):
+    cfg = yu.yaml_load_file( config )
+    users = cfg['users']
+    if test:
+        cmd = [ shutil.which("cat"), os.path.join(root,"rekey.log") ]
+        input = None
+    else:
+        cmd = [ shutil.which("vault"), 'operator', 'rekey', '-verify', '-nonce={}'.format(nonce), '-' ]
+        if file:
+            input = get_decrypted_key( file )
+        elif key:
+            input = key
+
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE )
+    out, err = p.communicate(input=input.encode('utf-8'))
+    if p.returncode != 0:
+        raise Exception("Failed executing: {}: {}".format(cmd, p.returncode))
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
