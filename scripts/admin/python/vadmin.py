@@ -23,8 +23,6 @@ log = logging.getLogger( "vadmin" )
 here = os.path.dirname(os.path.realpath(__file__))
 root = Path(here).parent
 
-key_line = re.compile( "^Key \d+ (.*)")
-
 def b64dec( v ):
     return base64.b64decode(v) if v is not None else None
 
@@ -99,6 +97,7 @@ def add_root_options( subs ):
 
     spp = sps.add_parser('add', help='verify a new key to the rekey operation')
     spp.add_argument('otp', help="one-time password")
+    spp.add_argument('nonce', help="nonce")
     spp.add_argument('--key', '-k', help="key plaintext")
     spp.add_argument('--file', '-f', help="encrypted keyfile")
     spp.set_defaults(fn=process_root_add)
@@ -148,6 +147,7 @@ def run_command_and_parse_keys( cmd, inp ):
     log.debug( "run_command_and_parse_keys: command: {}, input: {}".format(cmd,inp) )
     out, err = run( cmd, inp, True )
     keys = list()
+    key_line = re.compile("^Key \\d+ (.*)")
     for line in out.splitlines():
         print( line )
         match = key_line.match(line)
@@ -228,14 +228,30 @@ def process_root_init( key, file, **_ ):
     cmd = vault( 'generate-root', '-generate-otp' )
     otp, err = run( cmd, out=True )
     otp = otp.strip()
-    cmd = vault( 'generate-root', '-init', '-otp={}'.format(otp), '-' )
-    run( cmd, inp )
-    print( "One time password: {}".format(otp) )
+    cmd = vault( 'generate-root', '-init', '-otp={}'.format(otp) )
+    out, err = run( cmd, out=True )
+    nonce_line = re.compile("^Nonce\\s+(.*)")
 
-def process_root_add( key, file, otp, **_ ):
+    nonce = None
+    for line in out.splitlines():
+        print( line )
+        match = nonce_line.match(line)
+        if match:
+            nonce = match.group(1)
+
+    root_add( inp, nonce )
+    print( "-" * 70 )
+    print( "One time password: {}".format(otp) )
+    print( "Nonce: {}".format(nonce) )
+    print( "-" * 70 )
+
+def root_add( key, nonce ):
+    cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
+    run( cmd, key )
+
+def process_root_add( key, file, nonce, **_ ):
     inp = get_user_key( file, key )
-    cmd = vault( 'generate-root', '-otp={}'.format(otp) )
-    run( cmd, inp )
+    root_add( inp, nonce )
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
