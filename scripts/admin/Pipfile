@@ -10,5 +10,5 @@ python-gnupg = "*"
 requests = "*"
 "ruamel.yaml" = "*"
 
-# [requires]
+[requires]
 python_version = "3.7"
