@@ -10,7 +10,6 @@ steps:
 - name: docker
   image: plugins/docker
   settings:
-    dockerfile: "scripts/admin/Dockerfile"
     username:
       from_secret: docker_username
     password:
