@@ -13,6 +13,7 @@ import json
 import os.path
 import gnupg
 import yu
+import base64
 from pathlib import Path
 
 log = logging.getLogger( "vadmin" )
@@ -21,6 +22,9 @@ here = os.path.dirname(os.path.realpath(__file__))
 root = Path(here).parent
 
 key_line = re.compile( "^Key \d+: (.*)")
+
+def b64dec( v ):
+    return base64.b64decode(v) if v is not None else None
 
 def get_opts():
     cli = argparse.ArgumentParser(
@@ -41,6 +45,9 @@ def add_gpg_options( subs ):
     spp = sps.add_parser('list', help='list keys')
     spp.set_defaults(fn=process_gpg_list)
 
+    spp = sps.add_parser('decrypt', help='decrypt key')
+    spp.add_argument('file', help="encrypted keyfile")
+    spp.set_defaults(fn=process_gpg_decrypt)
 
 def add_rekey_options( subs ):
     sps = subs.add_parser('rekey', help='Rekey operations').add_subparsers()
@@ -147,9 +154,9 @@ def get_decrypted_key( file ):
     with open( file, "rb") as fd:
         encrypted = fd.read()
         log.debug( "process_rekey_add: encrypted key: {}".format(encrypted) )
-        decrypted = gpg.decrypt( encrypted, passphrase=passphrase )
+        decrypted = gpg.decrypt( b64dec(encrypted), passphrase=passphrase )
         if decrypted.ok:
-            ret = decrypted.data
+            ret = decrypted.data.decode('utf-8')
             log.debug( "process_rekey_add: decrypted key: {}".format(input) )
         else:
             raise Exception( "Failed decrypting: {} : {}".format(decrypted.status,decrypted.stderr) )
@@ -179,6 +186,10 @@ def process_rekey_add( config, key, file, nonce, test, **_ ):
             log.error( "Key length does not match user length: {} != {}".format(users, keys) )
     else:
         log.info( "No keys returned" )
+
+def process_gpg_decrypt( file, **_ ):
+    decrypted = get_decrypted_key( file )
+    print( decrypted )
 
 def process_gpg_list( **_ ):
     gpg = gnupg.GPG()
