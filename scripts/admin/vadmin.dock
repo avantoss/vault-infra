@@ -1,7 +1,7 @@
 #!/bin/bash
 
-image=local/vault-infra 
-# image=docker.infra.tstllc.net/lib/vault-infra 
+# image=local/vault-infra 
+image=docker.infra.tstllc.net/lib/vault-infra 
 docker pull $image
 entrypoint="/opt/vault-infra/vadmin"
 shift
