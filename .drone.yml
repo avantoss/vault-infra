@@ -1,0 +1,40 @@
+kind: pipeline
+name: default
+
+trigger:
+  branch:
+  - master
+
+steps:
+
+- name: docker
+  image: plugins/docker
+  settings:
+    dockerfile scripts/admin/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: docker.infra.tstllc.net/lib/vault-infra
+    registry: docker.infra.tstllc.net
+    build_args_from_env: [ DRONE_REPO, DRONE_BRANCH, DRONE_COMMIT, DRONE_BUILD_NUMBER ] 
+    tag:
+      - ${DRONE_BRANCH/master/latest}
+      - ${DRONE_BRANCH}.build-${DRONE_BUILD_NUMBER}
+    force_tag: true
+    storage_driver: overlay
+
+---
+kind: secret
+name: docker_username
+get:
+  path: secret/data/builder/docker-registry
+  name: user
+
+---
+kind: secret
+name: docker_password
+get:
+  path: secret/data/builder/docker-registry
+  name: password
+

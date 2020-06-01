@@ -1,0 +1,14 @@
+#!/bin/bash
+
+image=local/vault-infra 
+# image=docker.infra.tstllc.net/lib/vault-infra 
+docker pull $image
+entrypoint="/opt/vault-infra/vadmin"
+shift
+set -x
+docker run --rm -it --entrypoint $entrypoint \
+    -w /local \
+    -v $PWD:/local \
+    -v $HOME/.gnupg:/root/.gnupg \
+    -e VAULT_TOKEN=$(vault print token) \
+    $image "$@"
