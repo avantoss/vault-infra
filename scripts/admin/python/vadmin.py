@@ -101,6 +101,10 @@ def add_root_options( subs ):
     spp.add_argument('--file', '-f', help="encrypted keyfile")
     spp.set_defaults(fn=process_root_add)
 
+    spp = sps.add_parser('decode', help='decode the encoded root token')
+    spp.add_argument('token', help="encoded token")
+    spp.add_argument('otp', help="one-time password")
+    spp.set_defaults(fn=process_root_decode)
 
 def get_user_key( user, keys ):
     ret = None
@@ -222,6 +226,10 @@ def process_rekey_verify( key, file, nonce, **_ ):
     inp = get_user_key( file, key )
     out, err = run( cmd, inp )
 
+def root_add( key, nonce ):
+    cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
+    return run( cmd, key )
+
 def process_root_init( key, file, **_ ):
     inp = get_user_key( file, key )
     cmd = vault( 'generate-root', '-generate-otp' )
@@ -244,9 +252,10 @@ def process_root_init( key, file, **_ ):
     print( "Nonce: {}".format(nonce) )
     print( "-" * 70 )
 
-def root_add( key, nonce ):
-    cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
-    return run( cmd, key )
+def process_root_decode( token, otp,**_ ):
+    cmd = vault( 'generate-root', '-decode={}'.format(token), '-otp={}'.format(otp) )
+    decoded, err = run( cmd, out=True )
+    print( "Root token: {}".format(decoded) )
 
 def process_root_add( key, file, nonce, **_ ):
     inp = get_user_key( file, key )
