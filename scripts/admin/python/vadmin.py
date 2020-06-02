@@ -23,6 +23,9 @@ log = logging.getLogger( "vadmin" )
 here = os.path.dirname(os.path.realpath(__file__))
 root = Path(here).parent
 
+def header():
+    print( "-" * 70 )
+
 def b64dec( v ):
     return base64.b64decode(v) if v is not None else None
 
@@ -41,7 +44,7 @@ def run( cmd, inp=None, out=None, env=None ):
 def find_single(out, expr, group=1):
     ret = None
     for line in out.splitlines():
-        print(line)
+        print( line )
         match = expr.match(line)
         if match:
             ret = match.group(group)
@@ -232,8 +235,10 @@ def process_rekey_add( config, key, file, nonce, **_ ):
 
     if keys:
         if len(keys) == len(users):
+            header()
             for user, key in zip( users, keys ):
                 print( "{} : {}".format(user, key) )
+            header()
         else:
             log.error( "Key length does not match user length: {} != {}".format(users, keys) )
     else:
@@ -262,15 +267,17 @@ def process_root_init( key, file, **_ ):
     nonce = find_single( out, nonce_line )
 
     root_add( inp, nonce )
-    print( "-" * 70 )
+    header()
     print( "One time password: {}".format(otp) )
     print( "Nonce: {}".format(nonce) )
-    print( "-" * 70 )
+    header()
 
 def process_root_decode( token, otp,**_ ):
     cmd = vault( 'generate-root', '-decode={}'.format(token), '-otp={}'.format(otp) )
     decoded, err = run( cmd, out=True )
+    header()
     print( "Root token: {}".format(decoded) )
+    header()
 
 def process_root_add( key, file, nonce, **_ ):
     inp = get_input_key( file, key )
@@ -278,7 +285,9 @@ def process_root_add( key, file, nonce, **_ ):
     token_line = re.compile("^Encoded Token\\s+(.*)")
     token = find_single( out, token_line )
     if token:
+        header()
         print( "Encoded token: {}".format(token) )
+        header()
     else:
         print( "Token not available yet. Need additional keys to be entered" )
 
@@ -296,7 +305,7 @@ def process_gpg_list( **_ ):
     keys = gpg.list_keys()
     for key in keys:
         print( json.dumps(key, sort_keys=True, indent=2) )
-        print( '-' * 80 )
+        header()
 
 cli = get_opts()
 options = cli.parse_args( sys.argv[1:] )
