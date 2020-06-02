@@ -94,21 +94,27 @@ def add_key_args( spp ):
     spp.add_argument('--key', '-k', help="key plaintext")
     spp.add_argument('--file', '-f', help="encrypted keyfile")
 
+def add_config_arg( spp ):
+    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="config file location")
+
+def add_nonce_arg( spp ):
+    spp.add_argument('nonce', help="nonce for rekey/generate-root")
+
 def add_rekey_options( subs ):
     sps = subs.add_parser('rekey', help='Rekey operations').add_subparsers()
 
     spp = sps.add_parser('init', help='initialize rekey process')
-    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to rekey")
+    add_config_arg( spp )
     spp.set_defaults(fn=process_rekey_init)
 
     spp = sps.add_parser('add', help='add a new key to the rekey operation')
-    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to rekey")
-    spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
+    add_nonce_arg( spp )
+    add_config_arg( spp )
     add_key_args( spp )
     spp.set_defaults(fn=process_rekey_add)
 
     spp = sps.add_parser('verify', help='verify a new key to the rekey operation')
-    spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
+    add_nonce_arg( spp )
     add_key_args( spp )
     spp.set_defaults(fn=process_rekey_verify)
 
@@ -120,7 +126,7 @@ def add_root_options( subs ):
     spp.set_defaults(fn=process_root_init)
 
     spp = sps.add_parser('add', help='verify a new key to the rekey operation')
-    spp.add_argument('nonce', help="nonce")
+    add_nonce_arg( spp )
     add_key_args( spp )
     spp.set_defaults(fn=process_root_add)
 
