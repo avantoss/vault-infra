@@ -310,8 +310,8 @@ def process_unseal( address, key, file, **_ ):
     # }
     # cmd = vault( 'unseal', '-' )
     # run( cmd, inp=inp, env=env )
-    encoded = b64enc(inp)
-    log.debug( "process_unseal: key: {}, encoded: {}".format(inp,encoded) )
+    # encoded = b64enc(inp)
+    # log.debug( "process_unseal: key: {}, encoded: {}".format(inp,encoded) )
     response = requests.post( '{}/v1/sys/unseal'.format(addr), json={ 'key': inp }, verify=False )
     # print( response.text )
     response.raise_for_status()

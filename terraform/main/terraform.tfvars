@@ -62,9 +62,9 @@ ami_id        = "ami-0dd0f081597dd12ed"
 instance_type = "r4.large"
 ssh_key_name  = "vault-ssh-key"
 
-asg_min_size         = 2
+asg_min_size         = 3
 asg_max_size         = 3
-asg_desired_capacity = 2
+asg_desired_capacity = 3
 
 ############################
 ## S3 ######################
