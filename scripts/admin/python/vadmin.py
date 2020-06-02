@@ -34,7 +34,7 @@ def run( cmd, inp=None, out=None, env=None ):
     out, err = p.communicate(input=inp.encode('utf-8') if inp else None)
     log.debug( "run: command: {}, input: {}, output: {}".format(cmd, inp, out) )
     if p.returncode != 0:
-        raise Exception("Failed executing: {}: {}".format(cmd, p.returncode))
+        raise Exception("Failed executing: {} : {} : {} : {}".format(cmd, p.returncode, out, err))
 
     od = out.decode('utf-8') if out else None
     log.debug( "run: output: {}".format(od) )
@@ -109,8 +109,8 @@ def add_rekey_options( subs ):
 
     spp = sps.add_parser('add', help='add a new key to the rekey operation')
     add_nonce_arg( spp )
-    add_config_arg( spp )
     add_key_args( spp )
+    add_config_arg( spp )
     spp.set_defaults(fn=process_rekey_add)
 
     spp = sps.add_parser('verify', help='verify a new key to the rekey operation')
@@ -157,7 +157,6 @@ def get_user_key( user, keys ):
 def each_user_key( users ):
     gpg = gnupg.GPG()
     keys = gpg.list_keys()
-    ret = []
     for user in users:
         yield user, get_user_key(user,keys)
 
@@ -254,7 +253,7 @@ def process_rekey_add( config, key, file, nonce, **_ ):
 def process_rekey_verify( key, file, nonce, **_ ):
     cmd = vault( 'rekey', '-verify', '-nonce={}'.format(nonce), '-' )
     inp = get_input_key( file, key )
-    out, err = run( cmd, inp )
+    run( cmd, inp )
 
 def root_add( key, nonce ):
     cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
