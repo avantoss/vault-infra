@@ -79,6 +79,36 @@ resource "aws_security_group_rule" "ec2_in_8201" {
   self      = true
 }
 
+resource "aws_security_group_rule" "ec2_in_cidr_8200" {
+  type              = "ingress"
+  security_group_id = aws_security_group.ec2.id
+
+  description = "Allow direct access inside the net for unsealing"
+  protocol    = "tcp"
+  from_port   = 8200
+  to_port     = 8200
+  cidr_blocks = [
+    "172.30.0.0/16", 
+    "192.168.0.0/16", 
+    "10.0.0.0/16"
+  ]
+}
+
+resource "aws_security_group_rule" "ec2_in_cidr_8201" {
+  type              = "ingress"
+  security_group_id = aws_security_group.ec2.id
+
+  description = "Allow direct access inside the net for unsealing"
+  protocol    = "tcp"
+  from_port   = 8201
+  to_port     = 8201
+  cidr_blocks = [
+    "172.30.0.0/16", 
+    "192.168.0.0/16", 
+    "10.0.0.0/16"
+  ]
+}
+
 resource "aws_security_group_rule" "ec2_out_all" {
   type              = "egress"
   security_group_id = aws_security_group.ec2.id
