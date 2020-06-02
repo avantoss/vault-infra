@@ -26,8 +26,8 @@ root = Path(here).parent
 def b64dec( v ):
     return base64.b64decode(v) if v is not None else None
 
-def run( cmd, inp=None, out=None ):
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE if inp else None, stdout=subprocess.PIPE if out else None)
+def run( cmd, inp=None, out=None, env=None ):
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE if inp else None, stdout=subprocess.PIPE if out else None, env=env )
     out, err = p.communicate(input=inp.encode('utf-8') if inp else None)
     log.debug( "run: command: {}, input: {}, output: {}".format(cmd, inp, out) )
     if p.returncode != 0:
@@ -36,6 +36,25 @@ def run( cmd, inp=None, out=None ):
     od = out.decode('utf-8') if out else None
     log.debug( "run: output: {}".format(od) )
     return od, err
+
+
+def find_single(out, expr, group=1):
+    ret = None
+    for line in out.splitlines():
+        print(line)
+        match = expr.match(line)
+        if match:
+            ret = match.group(group)
+    return ret
+
+def find_multi(out, expr, group=1):
+    ret = list()
+    for line in out.splitlines():
+        print( line )
+        match = expr.match(line)
+        if match:
+            ret.append( match.group(group) )
+    return ret
 
 
 def vault( *args ):
@@ -54,6 +73,7 @@ def get_opts():
     add_gpg_options( subs )
     add_rekey_options( subs )
     add_root_options( subs )
+    add_unseal_options( subs )
 
     return cli
 
@@ -67,44 +87,49 @@ def add_gpg_options( subs ):
     spp.add_argument('file', help="encrypted keyfile")
     spp.set_defaults(fn=process_gpg_decrypt)
 
+def add_key_args( spp ):
+    spp.add_argument('--key', '-k', help="key plaintext")
+    spp.add_argument('--file', '-f', help="encrypted keyfile")
+
 def add_rekey_options( subs ):
     sps = subs.add_parser('rekey', help='Rekey operations').add_subparsers()
 
     spp = sps.add_parser('init', help='initialize rekey process')
-    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to unseal")
+    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to rekey")
     spp.set_defaults(fn=process_rekey_init)
 
     spp = sps.add_parser('add', help='add a new key to the rekey operation')
-    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to unseal")
+    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="number of shards required to rekey")
     spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
-    spp.add_argument('--key', '-k', help="key plaintext")
-    spp.add_argument('--file', '-f', help="encrypted keyfile")
+    add_key_args( spp )
     spp.set_defaults(fn=process_rekey_add)
 
     spp = sps.add_parser('verify', help='verify a new key to the rekey operation')
     spp.add_argument('--nonce', '-n', required=True, help="nonce from rekey -init")
-    spp.add_argument('--key', '-k', help="key plaintext")
-    spp.add_argument('--file', '-f', help="encrypted keyfile")
+    add_key_args( spp )
     spp.set_defaults(fn=process_rekey_verify)
 
 def add_root_options( subs ):
     sps = subs.add_parser('root', help='Generate root operations').add_subparsers()
 
     spp = sps.add_parser('init', help='initialize the new root key process')
-    spp.add_argument('--key', '-k', help="key plaintext")
-    spp.add_argument('--file', '-f', help="encrypted keyfile")
+    add_key_args( spp )
     spp.set_defaults(fn=process_root_init)
 
     spp = sps.add_parser('add', help='verify a new key to the rekey operation')
     spp.add_argument('nonce', help="nonce")
-    spp.add_argument('--key', '-k', help="key plaintext")
-    spp.add_argument('--file', '-f', help="encrypted keyfile")
+    add_key_args( spp )
     spp.set_defaults(fn=process_root_add)
 
     spp = sps.add_parser('decode', help='decode the encoded root token')
     spp.add_argument('token', help="encoded token")
     spp.add_argument('otp', help="one-time password")
     spp.set_defaults(fn=process_root_decode)
+
+def add_unseal_options( subs ):
+    spp = subs.add_parser('unseal', help='initialize the new root key process')
+    add_key_args( spp )
+    spp.set_defaults(fn=process_unseal)
 
 def get_user_key( user, keys ):
     ret = None
@@ -149,14 +174,8 @@ def load_config( config ):
 def run_command_and_parse_keys( cmd, inp ):
     log.debug( "run_command_and_parse_keys: command: {}, input: {}".format(cmd,inp) )
     out, err = run( cmd, inp, True )
-    keys = list()
     key_line = re.compile("^Key \\d+ (.*)")
-    for line in out.splitlines():
-        print( line )
-        match = key_line.match(line)
-        if match:
-            keys.append( match.group(1) )
-    return keys
+    return find_multi( out, key_line )
 
 def get_passphrase():
     passphrase = None
@@ -183,7 +202,7 @@ def get_decrypted_key( file ):
 
         return ret
 
-def get_user_key( file, key ):
+def get_input_key( file, key ):
     inp = get_decrypted_key( file ) if file else key
     if not inp: raise Exception( "No decryption key/file provided")
     return inp
@@ -208,7 +227,7 @@ def process_rekey_add( config, key, file, nonce, **_ ):
     cfg = yu.yaml_load_file( config )
     users = cfg['users']
     cmd = vault( 'rekey', '-nonce={}'.format(nonce), '-' )
-    inp = get_user_key( file, key )
+    inp = get_input_key( file, key )
     keys = run_command_and_parse_keys( cmd, inp )
 
     if keys:
@@ -223,28 +242,24 @@ def process_rekey_add( config, key, file, nonce, **_ ):
 
 def process_rekey_verify( key, file, nonce, **_ ):
     cmd = vault( 'rekey', '-verify', '-nonce={}'.format(nonce), '-' )
-    inp = get_user_key( file, key )
+    inp = get_input_key( file, key )
     out, err = run( cmd, inp )
 
 def root_add( key, nonce ):
     cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
-    return run( cmd, key )
+    return run( cmd, key, out=True )
 
 def process_root_init( key, file, **_ ):
-    inp = get_user_key( file, key )
+    inp = get_input_key( file, key )
     cmd = vault( 'generate-root', '-generate-otp' )
     otp, err = run( cmd, out=True )
+
     otp = otp.strip()
     cmd = vault( 'generate-root', '-init', '-otp={}'.format(otp) )
     out, err = run( cmd, out=True )
-    nonce_line = re.compile("^Nonce\\s+(.*)")
 
-    nonce = None
-    for line in out.splitlines():
-        print( line )
-        match = nonce_line.match(line)
-        if match:
-            nonce = match.group(1)
+    nonce_line = re.compile("^Nonce\\s+(.*)")
+    nonce = find_single( out, nonce_line )
 
     root_add( inp, nonce )
     print( "-" * 70 )
@@ -258,9 +273,19 @@ def process_root_decode( token, otp,**_ ):
     print( "Root token: {}".format(decoded) )
 
 def process_root_add( key, file, nonce, **_ ):
-    inp = get_user_key( file, key )
+    inp = get_input_key( file, key )
     out, err = root_add( inp, nonce )
-    print( out )
+    token_line = re.compile("^Encoded Token\\s+(.*)")
+    token = find_single( out, token_line )
+    if token:
+        print( "Encoded token: {}".format(token) )
+    else:
+        print( "Token not available yet. Need additional keys to be entered" )
+
+def process_unseal( address, key, file, **_ ):
+    inp = get_input_key( file, key )
+    cmd = vault( 'unseal', '-' )
+    run( cmd, inp=inp, env={'VAULT_ADDR': address} )
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
