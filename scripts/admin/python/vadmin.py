@@ -299,7 +299,8 @@ def process_root_add( key, file, nonce, **_ ):
 def process_unseal( address, key, file, **_ ):
     inp = get_input_key( file, key )
     cmd = vault( 'unseal', '-' )
-    run( cmd, inp=inp, env={'VAULT_ADDR': address} )
+    addr = address if address.startswith('http') else 'https://{}:8200'.format(address)
+    run( cmd, inp=inp, env={'VAULT_ADDR': addr} )
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
