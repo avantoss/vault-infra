@@ -15,6 +15,7 @@ import gnupg
 import yu
 import base64
 import getpass
+import requests
 
 from pathlib import Path
 
@@ -28,6 +29,9 @@ def header():
 
 def b64dec( v ):
     return base64.b64decode(v) if v is not None else None
+
+def b64enc( v ):
+    return base64.b64encode(v.encode("utf-8")).decode("utf-8") if v is not None else None
 
 def run( cmd, inp=None, out=None, env=None ):
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE if inp else None, stdout=subprocess.PIPE if out else None, env=env )
@@ -137,6 +141,7 @@ def add_root_options( subs ):
 
 def add_unseal_options( subs ):
     spp = subs.add_parser('unseal', help='initialize the new root key process')
+    spp.add_argument('address', help="IP or url to vault server")
     add_key_args( spp )
     spp.set_defaults(fn=process_unseal)
 
@@ -297,10 +302,21 @@ def process_root_add( key, file, nonce, **_ ):
         print( "Token not available yet. Need additional keys to be entered" )
 
 def process_unseal( address, key, file, **_ ):
-    inp = get_input_key( file, key )
-    cmd = vault( 'unseal', '-' )
     addr = address if address.startswith('http') else 'https://{}:8200'.format(address)
-    run( cmd, inp=inp, env={'VAULT_ADDR': addr} )
+    inp = get_input_key( file, key )
+    # env = {
+    #     'VAULT_TOKEN': os.environ.get('VAULT_TOKEN') or '',
+    #     'VAULT_ADDR': addr
+    # }
+    # cmd = vault( 'unseal', '-' )
+    # run( cmd, inp=inp, env=env )
+    encoded = b64enc(inp)
+    log.debug( "process_unseal: key: {}, encoded: {}".format(inp,encoded) )
+    response = requests.post( '{}/v1/sys/unseal'.format(addr), json={ 'key': inp }, verify=False )
+    # print( response.text )
+    response.raise_for_status()
+    print(json.dumps(response.json(), sort_keys=True, indent=2))
+
 
 def process_gpg_decrypt( file, **_ ):
     decrypted = get_decrypted_key( file )
