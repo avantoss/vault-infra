@@ -6,7 +6,7 @@ function usage {
 
 database=""
 role=""
-ttl="1h"
+ttl="8h"
 max_ttl="24h"
 prefix=""
 

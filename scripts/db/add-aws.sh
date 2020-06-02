@@ -3,14 +3,6 @@ dir=$(dirname $0)
 roles="aws-dev aws-dev-full aws-dba aws-hotel"
 prod="mysql.prod.infra.tstllc.net"
 
-echo -n db_username: 
-read username
-echo
-
-echo -n db_password: 
-read -s password
-echo
-
 function usage {
     echo "Usage: $exe -d (update database) -r (update roles)"
 }
@@ -54,5 +46,15 @@ function add_database {
         done
     fi
 }
+
+if [[ -n $update_databases ]] ; then
+    echo -n db_username: 
+    read username
+    echo
+
+    echo -n db_password: 
+    read -s password
+    echo
+fi
 
 add_database prod $prod 3306
