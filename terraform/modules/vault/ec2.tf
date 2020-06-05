@@ -53,6 +53,26 @@ resource "aws_launch_template" "lt" {
   )
 }
 
+resource "aws_autoscaling_notification" "asg_notifications" {
+  group_names = [
+    "${aws_autoscaling_group.asg.name}"
+  ]
+
+  notifications = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+  ]
+
+  topic_arn = "${data.aws_sns_topic.asg.arn}"
+}
+
+data "aws_sns_topic" "asg" {
+  name = "${var.asg_topic}"
+}
+
+
 resource "aws_autoscaling_group" "asg" {
   name_prefix = "${var.name_prefix}-"
 

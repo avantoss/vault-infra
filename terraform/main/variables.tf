@@ -97,6 +97,11 @@ variable "asg_desired_capacity" {
   description = "Desired number of instances in the ASG"
 }
 
+variable "asg_topic" {
+  type        = string
+  description = "SNS topic to send ASG changes"
+}
+
 ############################
 ## S3 ######################
 ############################

@@ -42,6 +42,11 @@ variable "alb_subnets" {
   description = "A list of subnets to launch the ALB in"
 }
 
+variable "asg_topic" {
+  type        = string
+  description = "SNS topic to send ASG notifications"
+}
+
 variable "ec2_subnets" {
   type        = list(string)
   description = "A list of subnets to launch the EC2 instances in"
