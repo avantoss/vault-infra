@@ -366,7 +366,7 @@ def process_server_list( **_ ):
     def check(v):
         return 'X' if v else ''
 
-    fmt = '{0: <15} {1: <15} {2: <11} {3: <7} {4: <6}'
+    fmt = '{0: <20} {1: <17} {2: <11} {3: <7} {4: <6}'
     print( fmt.format( "Instance", "IP", "Initialized", "Master", "Sealed") )
     for inst in instances:
         status = inst['ServerStatus']
