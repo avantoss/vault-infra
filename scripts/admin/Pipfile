@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 python-gnupg = "*"
 requests = "*"
+boto3 = "*"
 "ruamel.yaml" = "*"
 
 # [requires]

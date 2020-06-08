@@ -16,6 +16,8 @@ import yu
 import base64
 import getpass
 import requests
+import boto3
+import urllib3
 
 from pathlib import Path
 
@@ -81,8 +83,15 @@ def get_opts():
     add_rekey_options( subs )
     add_root_options( subs )
     add_unseal_options( subs )
+    add_server_options( subs )
 
     return cli
+
+def add_server_options( subs ):
+    sps = subs.add_parser('server', help='server operations').add_subparsers()
+
+    spp = sps.add_parser('list', help='list keys')
+    spp.set_defaults(fn=process_server_list)
 
 def add_gpg_options( subs ):
     sps = subs.add_parser('gpg', help='gpg operations').add_subparsers()
@@ -304,16 +313,7 @@ def process_root_add( key, file, nonce, **_ ):
 def process_unseal( address, key, file, **_ ):
     addr = address if address.startswith('http') else 'https://{}:8200'.format(address)
     inp = get_input_key( file, key )
-    # env = {
-    #     'VAULT_TOKEN': os.environ.get('VAULT_TOKEN') or '',
-    #     'VAULT_ADDR': addr
-    # }
-    # cmd = vault( 'unseal', '-' )
-    # run( cmd, inp=inp, env=env )
-    # encoded = b64enc(inp)
-    # log.debug( "process_unseal: key: {}, encoded: {}".format(inp,encoded) )
     response = requests.post( '{}/v1/sys/unseal'.format(addr), json={ 'key': inp }, verify=False )
-    # print( response.text )
     response.raise_for_status()
     print(json.dumps(response.json(), sort_keys=True, indent=2))
 
@@ -329,9 +329,63 @@ def process_gpg_list( **_ ):
         print( json.dumps(key, sort_keys=True, indent=2) )
         header()
 
+def describe_instances( prefix ):
+    client = boto3.client('ec2')
+    args = {'Filters': [{
+        'Name': 'tag:Name',
+        'Values': [ '{}*'.format(prefix) ]
+    } ] }
+
+    instances = []
+    while True:
+        response = client.describe_instances( **args )
+        for res in response['Reservations']:
+            instances.extend( res['Instances'] )
+        if 'NextToken' in response:
+            args['NextToken'] = response['NextToken']
+        else:
+            break
+
+    return instances
+
+def server_status( ip ):
+    addr = 'https://{}:8200'.format(ip)
+    url = '{}/v1/sys/health'.format(addr)
+    log.debug( "server_status: url: {}".format(url) )
+    response = requests.get( url, verify=False )
+    # response.raise_for_status()
+    ret = response.json()
+    log.debug( "server_status: ip: {}, status: {}".format(ip, ret) )
+    return ret
+
+def process_server_list( **_ ):
+    instances = describe_instances( 'vault-prod' )
+    for inst in instances:
+        inst['ServerStatus'] = server_status( inst['PrivateIpAddress'] )
+
+    def check(v):
+        return 'X' if v else ''
+
+    fmt = '{0: <15} {1: <15} {2: <11} {3: <7} {4: <6}'
+    print( fmt.format( "Instance", "IP", "Initialized", "Master", "Sealed") )
+    for inst in instances:
+        status = inst['ServerStatus']
+        print( fmt.format(
+            inst['InstanceId'],
+            inst['PrivateIpAddress'],
+            check(status['initialized']),
+            check(not status['standby']),
+            check(status['sealed']),
+        ))
+
+
 cli = get_opts()
 options = cli.parse_args( sys.argv[1:] )
 lgr.init( options )
+
+urllib3.disable_warnings()
+boto3.set_stream_logger('botocore', logging.WARNING)
+boto3.set_stream_logger('s3transfer', logging.WARNING)
 
 if 'fn' in options:
     options.fn( **vars(options) )
