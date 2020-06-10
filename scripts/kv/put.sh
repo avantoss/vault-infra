@@ -6,5 +6,6 @@ fi
 secret=$1
 shift
 
+set -x
 vault kv put secret/$secret "$@"
 
