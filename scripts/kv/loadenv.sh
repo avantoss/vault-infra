@@ -14,9 +14,10 @@ function value {
 
 env=$1
 
-$dir/awskey.sh kube/$env/aws $(value RANCHER_ACCESS_KEY) $(value RANCHER_SECRET_KEY)
-
 $dir/userpass.sh kube/$env/db $(value DB_USER) $(value DB_PASSWORD)
+$dir/awskey.sh kube/$env/aws $(value RANCHER_ACCESS_KEY) $(value RANCHER_SECRET_KEY)
+$dir/value.sh kube/${env}/launchdarkly $(value LAUNCHDARKLY_KEY)
+$dir/value.sh kube/${env}/slack $(value SLACK_KEY)
 
 $dir/put.sh kube/$env/secret \
     crypto=$(value CRYPTO_SECRET) \
@@ -42,6 +43,9 @@ $dir/put.sh kube/${env}/connexions \
     user=$(value CONNEXIONS_AUTH_USER_NAME)  \
     key=$(value CONNEXIONS_AUTH_SHARED_KEY)
 
-$dir/value.sh kube/${env}/launchdarkly $(value LAUNCHDARKLY_KEY)
-
-$dir/value.sh kube/${env}/slack $(value SLACK_KEY)
+# gws_url=$(value GWS_URL)
+# if [[ -n $gws_url ]] ; then
+    $dir/userpass.sh kube/${env}/gws \
+        "$(value GWS_USERNAME)"  \
+        "$(value GWS_PASSWORD)"
+# fi

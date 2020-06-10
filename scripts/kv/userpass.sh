@@ -1,4 +1,4 @@
-if [[ -z $3 ]] ; then
+if [[ "$#" -ne 3 ]] ; then
     echo "Usage: $0 <secret> <user> <password> [additional values]"
     exit 1
 fi
