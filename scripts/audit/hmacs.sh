@@ -40,6 +40,7 @@ tune "database" \
         "audit_non_hmac_request_keys": [ 
         ],
         "audit_non_hmac_response_keys": [ 
+            "username"
         ]
     }' 
 

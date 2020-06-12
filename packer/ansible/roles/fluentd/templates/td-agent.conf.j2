@@ -4,24 +4,92 @@
   pos_file /var/log/td-agent/vault.audit_log.pos
   <parse>
     @type json
+    time_format "%Y-%m-%dT%H:%M:%S.%N%z"
+    keep_time_key true
   </parse>
-  tag s3.vault.audit
+  tag vault.audit
 </source>  
 
-<match s3.*.*>  
-  @type s3
+<source>
+  @type tail
+  format /^(?<time>[^ ]+) \[(?<severity>[^ ]+)\][ ]+(?<source>[^:]+): (?<message>.*)/
+  time_format "%Y-%m-%dT%H:%M:%S.%N%z"
+  keep_time_key true
+  path /var/log/vault/server.log
+  pos_file /var/lib/td-agent/vault.server.pos
+  read_from_head true
+  tag vault.server
+</source>
 
-  aws_key_id {{ aws_access_key }}
-  aws_sec_key {{ aws_secret_key }}
-  s3_bucket {{ bucket }}
-  path "hosts/#{Socket.gethostname}/"
+<filter vault.audit>
+  @type record_transformer
+  enable_ruby true
+  <record>
+    message "${record.dig('request', 'id') || '-'} ${record.dig('request', 'remote_address') || '-'} ${record.dig('auth', 'display_name') || '-'} ${record.dig('request', 'operation') || '-'} ${record.dig('request', 'path') || '-'}"
+    host "#{Socket.gethostname}"
+  </record>
+</filter>
 
-  <buffer>
-    @type file
-    path /var/log/td-agent/s3
-    timekey_wait 1m
-    chunk_limit_size 256m
-  </buffer>
+<filter vault.server>
+  @type record_transformer
+  enable_ruby true
+  <record>
+    message "${record['source']}: ${record['message']}"
+    severity "${(record['severity'] || '').downcase}"
+    host "#{Socket.gethostname}"
+  </record>
+</filter>
 
-  time_slice_format %Y%m%d%H%M
+<match *.**>  
+  @type copy
+  <store>
+    @type s3
+
+    aws_key_id {{ aws_access_key }}
+    aws_sec_key {{ aws_secret_key }}
+    s3_bucket {{ bucket }}
+    path "hosts/#{Socket.gethostname}/"
+    time_slice_format %Y%m%d%H
+
+    <buffer>
+      @type file
+      path /var/log/td-agent/s3
+      timekey_wait 1m
+      chunk_limit_size 16m
+    </buffer>
+
+  </store>
+  <store>
+    @type elasticsearch
+
+    @log_level info
+    include_tag_key true
+    host elastic.infra.tstllc.net
+    port 443
+    scheme https
+    ssl_version TLSv1_2
+
+    logstash_prefix vault
+    logstash_format true
+
+    <buffer tag,time>
+      @type file
+      path /var/log/td-agent/elasticsearch
+
+      timekey_wait 1m
+      timekey 30m
+
+      flush_mode interval
+      flush_interval 1m
+      flush_thread_count 3
+
+      retry_max_interval 60
+      retry_forever
+      retry_type exponential_backoff
+
+      chunk_limit_size 16m
+      queue_limit_length 96
+      overflow_action block
+    </buffer>
+  </store>
 </match>  
