@@ -17,8 +17,6 @@ function tune {
 tune "secret" \
     '{ 
         "audit_non_hmac_request_keys": [ 
-            "accessor",
-            "client_token_accessor"
         ],
         "audit_non_hmac_response_keys": [ 
             "created_time",
