@@ -1,15 +1,17 @@
 if [[ -z $1 ]] ; then
-    echo "Usage: $0 <environment>"
+    echo "Usage: $0 <environment> [file]"
     exit 1
 fi
 
 dir=$(dirname $0)
 # secrets=$dir/../../../kube-deploy/.secrets
 secrets=/tmp
+file=$2
 
 function value {
     key=$1
-    grep "^${key}=" $secrets/${env}.env | cut -d= -f 2 | sed 's/^@/\\@/'
+    ef=${file:-"$secrets/${env}.env"}
+    grep "^${key}=" $ef | cut -d= -f 2 | sed 's/^@/\\@/'
 }
 
 env=$1
