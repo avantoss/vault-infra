@@ -7,7 +7,7 @@ vault write auth/approle/role/$role \
     token_ttl=20m \
     token_max_ttl=30m \
     secret_id_num_uses=0 \
-    token_policies=default,builder
+    token_policies=default,builder,kube
 
 vault read auth/approle/role/$role/role-id
 

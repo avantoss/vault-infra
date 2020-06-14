@@ -1,3 +1,3 @@
-path "secret/data/luggage" {
+path "secret/data/kube/*" {
     capabilities = [ "read" ]
 }

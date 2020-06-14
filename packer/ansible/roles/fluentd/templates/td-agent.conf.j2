@@ -48,14 +48,15 @@
     aws_key_id {{ aws_access_key }}
     aws_sec_key {{ aws_secret_key }}
     s3_bucket {{ bucket }}
-    path "hosts/#{Socket.gethostname}/"
-    time_slice_format %Y%m%d%H
+    path "%Y/%m/%d/#{Socket.gethostname}/"
 
-    <buffer>
+    <buffer tag,time>
       @type file
       path /var/log/td-agent/s3
-      timekey_wait 1m
-      chunk_limit_size 16m
+      timekey 3600 # 1 hour partition
+      timekey_wait 10m
+      timekey_use_utc true # use utc
+      chunk_limit_size 32m
     </buffer>
 
   </store>
