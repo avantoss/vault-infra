@@ -225,7 +225,8 @@ def get_decrypted_key( file ):
         return ret
 
 def get_input_key( file, key ):
-    inp = get_decrypted_key( file ) if file else key
+    kf = file if file else os.environ.get('VAULT_KEY')
+    inp = get_decrypted_key( kf ) if kf else key
     if not inp: raise Exception( "No decryption key/file provided")
     return inp
 
@@ -361,7 +362,10 @@ def server_status( ip ):
 def process_server_list( **_ ):
     instances = describe_instances( 'vault-prod' )
     for inst in instances:
-        inst['ServerStatus'] = server_status( inst['PrivateIpAddress'] )
+        try:
+            inst['ServerStatus'] = server_status( inst['PrivateIpAddress'] )
+        except Exception as ex:
+            log.error( "process_server_list: could not get information on instance: {}".format(inst) )
 
     def check(v):
         return 'X' if v else ''
@@ -369,14 +373,14 @@ def process_server_list( **_ ):
     fmt = '{0: <20} {1: <17} {2: <11} {3: <7} {4: <6}'
     print( fmt.format( "Instance", "IP", "Initialized", "Master", "Sealed") )
     for inst in instances:
-        status = inst['ServerStatus']
-        print( fmt.format(
-            inst['InstanceId'],
-            inst['PrivateIpAddress'],
-            check(status['initialized']),
-            check(not status['standby']),
-            check(status['sealed']),
-        ))
+        status = inst.get('ServerStatus')
+        if status:
+            print( fmt.format(
+                inst.get('InstanceId'),
+                inst.get('PrivateIpAddress'),
+                check(status.get('initialized')),
+                check(not status.get('standby')),
+                check(status.get('sealed'))) )
 
 
 cli = get_opts()
