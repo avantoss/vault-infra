@@ -315,8 +315,8 @@ def process_unseal( address, key, file, **_ ):
     addr = address if address.startswith('http') else 'https://{}:8200'.format(address)
     inp = get_input_key( file, key )
     response = requests.post( '{}/v1/sys/unseal'.format(addr), json={ 'key': inp }, verify=False )
-    response.raise_for_status()
     print(json.dumps(response.json(), sort_keys=True, indent=2))
+    response.raise_for_status()
 
 
 def process_gpg_decrypt( file, **_ ):
