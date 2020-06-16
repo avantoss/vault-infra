@@ -385,7 +385,15 @@ def get_tokens():
 
     return tokens
 
+def get_current_token():
+    client = vault.Client()
+    response = client.send_post( '/auth/token/lookup', { 'token': vault.Client.token() } )
+    return response.json()
+
 def process_token_list( users, root, **_ ):
+    current = get_current_token()
+    current_accessor = current['data']['accessor']
+
     tokens = get_tokens()
     # print(json.dumps(tokens, sort_keys=True, indent=2))
     headers = [ 'ACCESSOR', 'NAME', 'POLICIES' ]
@@ -396,7 +404,8 @@ def process_token_list( users, root, **_ ):
             policies = data['policies']
             is_root = 'root' in policies
             if (not users or not is_root) and (not root or is_root):
-                row = [ data['accessor'] ]
+                accessor = data['accessor']
+                row = [ "*{}*".format(accessor) if accessor == current_accessor else " {} ".format(accessor) ]
                 meta = data.get('meta')
                 username = meta.get('username') if meta else None
                 row.append( username if username else data['display_name'] )
