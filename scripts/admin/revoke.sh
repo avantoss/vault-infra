@@ -1,0 +1,1 @@
+vault token revoke -accessor "$@"
