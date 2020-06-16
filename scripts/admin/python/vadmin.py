@@ -18,13 +18,17 @@ import getpass
 import requests
 import boto3
 import urllib3
+import vault
+import printer
 
 from pathlib import Path
 
 log = logging.getLogger( "vadmin" )
 
 here = os.path.dirname(os.path.realpath(__file__))
-root = Path(here).parent
+parent = Path(here).parent
+
+vault_addr = os.environ.get( 'VAULT_ADDR' )
 
 def header():
     print( "-" * 70 )
@@ -66,7 +70,7 @@ def find_multi(out, expr, group=1):
     return ret
 
 
-def vault( *args ):
+def vault_operator( *args ):
     cmd = [shutil.which('vault'), 'operator' ]
     cmd.extend( args )
     return cmd
@@ -84,8 +88,17 @@ def get_opts():
     add_root_options( subs )
     add_unseal_options( subs )
     add_server_options( subs )
+    add_token_options( subs )
 
     return cli
+
+def add_token_options( subs ):
+    sps = subs.add_parser('token', help='token operations').add_subparsers()
+
+    spp = sps.add_parser('list', help='list tokens')
+    spp.add_argument('--root', '-r', action='store_true', help="Only show root tokens" )
+    spp.add_argument('--users', '-u', action='store_true', help="Only show user tokens" )
+    spp.set_defaults(fn=process_token_list)
 
 def add_server_options( subs ):
     sps = subs.add_parser('server', help='server operations').add_subparsers()
@@ -108,7 +121,7 @@ def add_key_args( spp ):
     spp.add_argument('--file', '-f', help="encrypted keyfile")
 
 def add_config_arg( spp ):
-    spp.add_argument('--config', '-c', default=os.path.join(root,"vadmin.yml"), help="config file location")
+    spp.add_argument('--config', '-c', default=os.path.join(parent,"vadmin.yml"), help="config file location")
 
 def add_nonce_arg( spp ):
     spp.add_argument('nonce', help="nonce for rekey/generate-root")
@@ -236,7 +249,7 @@ def process_rekey_init( config, **_ ):
     def handler( user_key_files ):
         shares = len(user_key_files)
         keys_arg = ','.join([ file for user, file in user_key_files ] )
-        cmd = vault( 'rekey', '-init', '-verify', '-backup',
+        cmd = vault_operator( 'rekey', '-init', '-verify', '-backup',
             '-key-shares={}'.format(shares),
             '-key-threshold={}'.format(threshold),
             '-pgp-keys={}'.format(keys_arg)
@@ -249,7 +262,7 @@ def process_rekey_init( config, **_ ):
 def process_rekey_add( config, key, file, nonce, **_ ):
     cfg = yu.yaml_load_file( config )
     users = cfg['users']
-    cmd = vault( 'rekey', '-nonce={}'.format(nonce), '-' )
+    cmd = vault_operator( 'rekey', '-nonce={}'.format(nonce), '-' )
     inp = get_input_key( file, key )
     keys = run_command_and_parse_keys( cmd, inp )
 
@@ -266,21 +279,21 @@ def process_rekey_add( config, key, file, nonce, **_ ):
 
 
 def process_rekey_verify( key, file, nonce, **_ ):
-    cmd = vault( 'rekey', '-verify', '-nonce={}'.format(nonce), '-' )
+    cmd = vault_operator( 'rekey', '-verify', '-nonce={}'.format(nonce), '-' )
     inp = get_input_key( file, key )
     run( cmd, inp )
 
 def root_add( key, nonce ):
-    cmd = vault( 'generate-root', '-nonce={}'.format(nonce), '-' )
+    cmd = vault_operator( 'generate-root', '-nonce={}'.format(nonce), '-' )
     return run( cmd, key, out=True )
 
 def process_root_init( key, file, **_ ):
     inp = get_input_key( file, key )
-    cmd = vault( 'generate-root', '-generate-otp' )
+    cmd = vault_operator( 'generate-root', '-generate-otp' )
     otp, err = run( cmd, out=True )
 
     otp = otp.strip()
-    cmd = vault( 'generate-root', '-init', '-otp={}'.format(otp) )
+    cmd = vault_operator( 'generate-root', '-init', '-otp={}'.format(otp) )
     out, err = run( cmd, out=True )
 
     nonce_line = re.compile("^Nonce\\s+(.*)")
@@ -293,7 +306,7 @@ def process_root_init( key, file, **_ ):
     header()
 
 def process_root_decode( token, otp,**_ ):
-    cmd = vault( 'generate-root', '-decode={}'.format(token), '-otp={}'.format(otp) )
+    cmd = vault_operator( 'generate-root', '-decode={}'.format(token), '-otp={}'.format(otp) )
     decoded, err = run( cmd, out=True )
     header()
     print( "Root token: {}".format(decoded) )
@@ -358,6 +371,41 @@ def server_status( ip ):
     ret = response.json()
     log.debug( "server_status: ip: {}, status: {}".format(ip, ret) )
     return ret
+
+def get_tokens():
+    client = vault.Client()
+    response = client.send_list( 'auth/token/accessors' )
+    accessors = response.json()['data']['keys']
+    log.debug( "get_tokens: accessors: {}".format(accessors) )
+    tokens = list()
+    for accessor in accessors:
+        token = client.send_post('auth/token/lookup-accessor', { 'accessor': accessor} ).json()
+        log.debug( "get_tokens: token: {}".format(token) )
+        tokens.append( token )
+
+    return tokens
+
+def process_token_list( users, root, **_ ):
+    tokens = get_tokens()
+    # print(json.dumps(tokens, sort_keys=True, indent=2))
+    headers = [ 'ACCESSOR', 'NAME', 'POLICIES' ]
+    rows = list()
+    for token in tokens:
+        try:
+            data = token['data']
+            policies = data['policies']
+            is_root = 'root' in policies
+            if (not users or not is_root) and (not root or is_root):
+                row = [ data['accessor'] ]
+                meta = data.get('meta')
+                username = meta.get('username') if meta else None
+                row.append( username if username else data['display_name'] )
+                row.append( ",".join(data['policies']) )
+                rows.append( row )
+        except Exception:
+            log.exception( "Failed processing token: {}".format(token) )
+    rows = sorted( rows, key=lambda x: x[1] )
+    printer.write( headers, rows )
 
 def process_server_list( **_ ):
     instances = describe_instances( 'vault-prod' )
