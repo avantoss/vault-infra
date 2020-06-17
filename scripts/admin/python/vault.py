@@ -89,7 +89,9 @@ class Client:
 
     @staticmethod
     def token():
-        cmd = [ shutil.which('vault'), 'print', 'token' ]
+        exe = shutil.which('vault')
+        if not exe: raise Exception( "Coulld not find vault executable" )
+        cmd = [ exe, 'print', 'token' ]
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         out, err = p.communicate()
         if p.returncode != 0:
