@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import os
 import logging
 import subprocess
 import shutil
 import requests
 import lgr
+from pathlib import Path
 
 log = logging.getLogger( "vault" )
 
@@ -89,14 +91,33 @@ class Client:
 
     @staticmethod
     def token():
+        token = os.environ.get('VAULT_TOKEN')
+        if token:
+            log.debug( "token: found token: {} in environment".format(token) )
+            return token
+
+        home = str(Path.home())
+        file = os.path.join( home, ".vault-token" )
+        if os.path.isfile( file ):
+            with open( file, "r" ) as fd:
+                token = fd.read().strip()
+                log.debug("token: found token: {} in: {}".format(token, file) )
+                return token
+
         exe = shutil.which('vault')
-        if not exe: raise Exception( "Coulld not find vault executable" )
-        cmd = [ exe, 'print', 'token' ]
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        out, err = p.communicate()
-        if p.returncode != 0:
-            raise Exception("Failed getting current token: {}".format(p.returncode))
-        return out.decode('utf-8').strip()
+        if exe:
+            cmd = [ exe, 'print', 'token' ]
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+            out, err = p.communicate()
+            if p.returncode != 0:
+                raise Exception("Failed getting current token: {}".format(p.returncode))
+            token = out.decode('utf-8').strip()
+            log.debug( "token: found token: {} with vault command".format(token) )
+            return token
+        else:
+            log.error( "Could not find vault executable" )
+
+        raise Exception( "Could not find vault token" )
 
     @staticmethod
     def headers():
