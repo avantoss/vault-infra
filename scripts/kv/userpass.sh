@@ -3,10 +3,10 @@ if [[ "$#" -ne 3 ]] ; then
     exit 1
 fi
 
-secret=$1
-user=$2
+secret="$1"
+user="$2"
 password="$3"
 shift 3
 
 dir=$(dirname $0)
-$dir/put.sh $secret user=$user "password=$password" "$@"
+$dir/put.sh "$secret" "user=$user" "password=$password" "$@"

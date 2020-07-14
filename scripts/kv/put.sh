@@ -3,9 +3,9 @@ if [[ -z $2 ]] ; then
     exit 1
 fi
 
-secret=$1
+secret="$1"
 shift
 
 set -x
-vault kv put secret/$secret "$@"
+vault kv put "secret/$secret" "$@"
 

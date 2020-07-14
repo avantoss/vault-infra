@@ -4,10 +4,10 @@ if [[ -z $3 ]] ; then
 fi
 dir=$(dirname $0)
 
-secret=$1
-accesskey=$2
+secret="$1"
+accesskey="$2"
 secretkey="$3"
 shift 3
 
-$dir/put.sh $secret accesskey=$accesskey "secretkey=$secretkey" "$@"
+$dir/put.sh "$secret" "accesskey=$accesskey" "secretkey=$secretkey" "$@"
 

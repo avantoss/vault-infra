@@ -1,1 +1,1 @@
-vault kv list secret/$1
+vault kv list "secret/$1"

@@ -3,8 +3,8 @@ if [[ -z $1 ]] ; then
     exit 1
 fi
 
-secret=$1
+secret="$1"
 shift 
 
-vault kv delete "$@" secret/$secret 
+vault kv delete "$@" "secret/$secret"
 
