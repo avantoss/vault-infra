@@ -21,6 +21,6 @@ jobs:
           sudo chmod 755 /usr/local/bin/terraform
           rm -f /tmp/terraform.zip
         env:
-          TERRAFORM_VERSION: "0.12.21"
+          TERRAFORM_VERSION: "0.12.28"
       - name: Terraform Format
         run: terraform fmt -check -diff -recursive
