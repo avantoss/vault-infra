@@ -9,6 +9,8 @@ resource "aws_launch_template" "lt" {
   key_name      = var.ssh_key_name
   user_data     = base64encode(data.template_file.userdata.rendered)
 
+  update_default_version = true
+
   iam_instance_profile {
     name = aws_iam_instance_profile.vault_ec2_instance_profile.name
   }
