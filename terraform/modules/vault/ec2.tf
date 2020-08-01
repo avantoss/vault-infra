@@ -26,7 +26,7 @@ resource "aws_launch_template" "lt" {
   network_interfaces {
     device_index                = 0
     associate_public_ip_address = false
-    delete_on_termination       = true
+    delete_on_termination       = "true"
 
     security_groups = [aws_security_group.ec2.id]
   }

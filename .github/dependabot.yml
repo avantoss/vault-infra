@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      time: "09:00"
+      interval: daily
+    allow:
+      - dependency-type: all
+    assignees:
+      - lingrino
+    reviewers:
+      - lingrino
+    labels:
+      - dependencies
+      - actions
+
+  - package-ecosystem: terraform
+    directory: /terraform/main
+    schedule:
+      time: "09:00"
+      interval: daily
+    allow:
+      - dependency-type: all
+    assignees:
+      - lingrino
+    reviewers:
+      - lingrino
+    labels:
+      - dependencies
+      - go
+
+  - package-ecosystem: terraform
+    directory: /terraform/modules/vault
+    schedule:
+      time: "09:00"
+      interval: daily
+    allow:
+      - dependency-type: all
+    assignees:
+      - lingrino
+    reviewers:
+      - lingrino
+    labels:
+      - dependencies
+      - go

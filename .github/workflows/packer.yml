@@ -1,6 +1,7 @@
 name: Packer
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - packer/**
@@ -10,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code - Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
       - name: Packer - Install
@@ -23,7 +24,7 @@ jobs:
         env:
           PACKER_VERSION: "1.6.0"
       - name: Ansible Lint
-        uses: ansible/ansible-lint-action@master
+        uses: ansible/ansible-lint-action@v2
         with:
           targets: packer/ansible/**/*.yml
       - name: Packer - Validate
