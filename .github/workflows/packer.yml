@@ -24,7 +24,7 @@ jobs:
         env:
           PACKER_VERSION: "1.6.0"
       - name: Ansible Lint
-        uses: ansible/ansible-lint-action@v2
+        uses: ansible/ansible-lint-action@master
         with:
           targets: packer/ansible/**/*.yml
       - name: Packer - Validate
