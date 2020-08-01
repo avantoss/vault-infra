@@ -3,7 +3,6 @@
 
 resource "aws_s3_bucket" "vault_resources" {
   bucket        = var.vault_resources_bucket_name
-  region        = var.region
   force_destroy = true
 
   acl    = "log-delivery-write"
@@ -72,7 +71,6 @@ resource "aws_s3_bucket" "vault_resources_dr" {
   provider = aws.dr
 
   bucket        = "${var.vault_resources_bucket_name}-dr"
-  region        = var.dr_region
   force_destroy = true
 
   acl = "private"
@@ -101,7 +99,6 @@ resource "aws_s3_bucket" "vault_resources_dr" {
 
 resource "aws_s3_bucket" "vault_data" {
   bucket        = var.vault_data_bucket_name
-  region        = var.region
   force_destroy = true
 
   acl = "private"
@@ -146,7 +143,6 @@ resource "aws_s3_bucket" "vault_data_dr" {
   provider = aws.dr
 
   bucket        = "${var.vault_data_bucket_name}-dr"
-  region        = var.dr_region
   force_destroy = true
 
   acl = "private"

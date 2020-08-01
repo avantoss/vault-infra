@@ -16,7 +16,7 @@ There are a number of features unique to this module that make it attractive for
 
 ## Vault Architecture
 
-![Architecture Map](https://raw.githubusercontent.com/grem11n/vault-infra/master/_docs/architecture.png)
+![Architecture Map](https://raw.githubusercontent.com/avantoss/vault-infra/HEAD/_docs/architecture.png)
 
 ## Getting Started
 

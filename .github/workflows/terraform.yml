@@ -1,6 +1,7 @@
 name: Terraform
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - terraform/**
@@ -10,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code - Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
       - name: Terraform - Install
@@ -21,6 +22,6 @@ jobs:
           sudo chmod 755 /usr/local/bin/terraform
           rm -f /tmp/terraform.zip
         env:
-          TERRAFORM_VERSION: "0.12.28"
+          TERRAFORM_VERSION: "0.12.29"
       - name: Terraform Format
         run: terraform fmt -check -diff -recursive
