@@ -135,6 +135,12 @@ variable "vault_data_bucket_name" {
   description = "The name of the vault data bucket"
 }
 
+variable "vault_logs_retention_days" {
+  type        = string
+  description = "The number of days to retain vault logs in S3"
+  default     = 300
+}
+
 ############################
 ## DynamoDB ################
 ############################
