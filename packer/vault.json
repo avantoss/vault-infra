@@ -1,7 +1,7 @@
 {
     "variables": {
         "license": "The MIT License (MIT)",
-        "copyright": "Copyright (c) 2014-2020 Avant, Sean Lingren",
+        "copyright": "Copyright (c) 2014-2021 Avant, Sean Lingren",
         "vault_version": "1.5.0",
         "vault_version_checksum": "322393aee141c4711fc5f9e1df9f461af3a861e59b8d4d0a85e82477cdbc73a0",
         "builder_region": "us-west-1",
