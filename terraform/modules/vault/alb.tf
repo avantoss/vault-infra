@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2020 Avant, Sean Lingren
+# Copyright (c) 2014-2021 Avant, Sean Lingren
 
 resource "aws_lb" "alb" {
   name            = replace(var.name_prefix, "_", "-")

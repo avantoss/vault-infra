@@ -22,7 +22,7 @@ jobs:
           sudo chmod 755 /usr/local/bin/packer
           rm -f /tmp/packer.zip
         env:
-          PACKER_VERSION: "1.6.0"
+          PACKER_VERSION: "1.7.2"
       - name: Ansible Lint
         uses: ansible/ansible-lint-action@master
         with:

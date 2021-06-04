@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2020 Avant, Sean Lingren
+# Copyright (c) 2014-2021 Avant, Sean Lingren
 
 resource "aws_s3_bucket" "vault_resources" {
   bucket        = var.vault_resources_bucket_name
@@ -24,13 +24,8 @@ resource "aws_s3_bucket" "vault_resources" {
 
     abort_incomplete_multipart_upload_days = 7
 
-    transition {
-      days          = "30"
-      storage_class = "GLACIER"
-    }
-
     expiration {
-      days = "300"
+      days = var.vault_logs_retention_days
     }
   }
 

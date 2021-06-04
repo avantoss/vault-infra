@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2020 Avant, Sean Lingren
+# Copyright (c) 2014-2021 Avant, Sean Lingren
 
 ############################
 ## Environment #############
@@ -133,6 +133,12 @@ variable "vault_resources_bucket_name" {
 variable "vault_data_bucket_name" {
   type        = string
   description = "The name of the vault data bucket"
+}
+
+variable "vault_logs_retention_days" {
+  type        = string
+  description = "The number of days to retain vault logs in S3"
+  default     = 300
 }
 
 ############################

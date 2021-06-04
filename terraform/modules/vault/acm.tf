@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2020 Avant, Sean Lingren
+# Copyright (c) 2014-2021 Avant, Sean Lingren
 
 resource "aws_acm_certificate" "acm" {
   count             = var.alb_certificate_arn == "" ? 1 : 0
