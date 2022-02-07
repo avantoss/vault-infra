@@ -180,7 +180,7 @@ For ease of use this module requires that you manually enter the AMI ID of the P
 
 This project is licensed under the MIT License:
 
-Copyright (c) 2014-2021, Avant, Sean Lingren
+Copyright (c) 2014-2022, Avant, Sean Lingren
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
