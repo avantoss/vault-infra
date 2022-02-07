@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014-2021 Avant, Sean Lingren
+# Copyright (c) 2014-2022 Avant, Sean Lingren
 
 resource "aws_kms_alias" "seal" {
   name          = "alias/${var.name_prefix}/seal"
