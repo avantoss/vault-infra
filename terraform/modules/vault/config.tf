@@ -2,7 +2,7 @@
 # Copyright (c) 2014-2022 Avant, Sean Lingren
 
 # Upload config to S3
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_object" "object" {
   bucket  = aws_s3_bucket.vault_resources.id
   key     = "resources/config/config.hcl"
   content = data.template_file.vault_config.rendered
