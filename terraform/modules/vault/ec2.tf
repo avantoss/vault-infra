@@ -90,8 +90,12 @@ resource "aws_autoscaling_group" "asg" {
     "GroupTotalInstances",
   ]
 
-  tags = [
-    for k, v in var.tags :
-    { "key" : k, "value" : v, "propagate_at_launch" : "true" }
-  ]
+  dynamic "tag" {
+    for_each = var.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = "true"
+    }
+  }
 }
